@@ -1,0 +1,6 @@
+rootProject.name = 'DairyCalendar'
+
+include 'backend'
+include 'frontend'
+include 'containers'
+

@@ -1,0 +1,26 @@
+version: '2.5' #version of docker-compose
+name: dairy_calendar_compose
+#docker exec -it dairy_calendar_postgres{container_name} bash
+services:
+  postgres:
+    #psql -U postgres
+    container_name: dairy_calendar_postgres
+    image: postgres:14.2-alpine
+    #build: 
+    #  context: .
+    #  dockerfile: Dockerfile
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      
+  pgadmin:
+    container_name: dairy_calendar_pgadmin
+    image: dpage/pgadmin4:6.9
+    ports:
+      - "80:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@example.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+
