@@ -4,7 +4,7 @@ import {Day} from "./Day";
 
 const URL = 'http://localhost:8181';
 
-export const getCurseList = () => {
+export const getCourseList = () => {
     const url = URL + `/courseList`;
     let courses: Course[] = [];
     axios

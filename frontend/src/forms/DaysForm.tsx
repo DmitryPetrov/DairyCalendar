@@ -1,9 +1,9 @@
-import React, {SyntheticEvent, useState} from "react";
+import React, {useState} from "react";
 import {Course} from "../model/Course";
 import {Box, Button, Stack, TextField} from "@mui/material";
 import {Day} from "../model/Day";
 import DayForm from "./DayForm";
-import {getCurseList, postDays} from "../model/api"
+import {getCourseList, postDays} from "../model/api"
 import moment from "moment";
 
 
@@ -25,7 +25,7 @@ export default function DaysForm({onSave, onCancel}: CourseFormProps) {
 
     const handleSubmit = () => {postDays(days)};
 
-    React.useEffect(() => {setCourses(getCurseList())}, []);
+    React.useEffect(() => {setCourses(getCourseList())}, []);
 
     const handleButton = (day: Day) => {
         day.date = new Date(date);

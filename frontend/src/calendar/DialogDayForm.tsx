@@ -1,11 +1,11 @@
 import * as React from 'react';
+import {useState} from 'react';
 import {Course} from "../model/Course";
 import moment, {Moment} from "moment/moment";
 import {Button, Dialog, DialogActions, DialogContent, DialogTitle, List} from "@mui/material";
 import DayCourseForm from "../forms/DayCourseForm";
-import {getCurseList, postDays} from "../model/api"
+import {postDays} from "../model/api"
 import {Day} from "../model/Day";
-import {useState} from "react";
 
 interface RowProps {
     open: boolean;
