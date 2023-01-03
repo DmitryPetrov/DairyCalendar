@@ -1,20 +1,13 @@
 import * as React from 'react';
+import {useState} from 'react';
 import Box from '@mui/material/Box';
 import {Course} from "../model/Course";
-import moment, {Moment} from "moment/moment";
-import {
-    List,
-    ListItem,
-    ListItemButton,
-    ListItemText,
-    Stack,
-} from "@mui/material";
-import {useState} from "react";
-import DayCourseForm from "../forms/DayCourseForm";
+import {List, ListItem, ListItemButton, ListItemText, Stack,} from "@mui/material";
 import DialogDayForm from "./DialogDayForm";
+import {DateTime} from "luxon";
 
 interface RowProps {
-    date: Moment;
+    date: DateTime;
     courses: Course[];
     tags: string[];
     assessments: (number | null)[];
@@ -32,17 +25,17 @@ function Row({ date, courses, tags, assessments }: RowProps) {
     return (
             <List dense={true}>
                 <ListItemButton onClick={handleClickOpen}>
-                    <ListItemText primary={date.toISOString().split("T")[0]} />
+                    <ListItemText primary={date.toISODate()} />
                 </ListItemButton>
                 {courses.map(course => {
-                    let days2 = course.days.filter(day => moment(day.date).isSame(date));
+                    let days2 = course.days.filter(day => day.date.hasSame(date, 'day'));
 
                     if ((Array.isArray(days2)) && (days2.length === 1)) {
-                        return <ListItem key={course.name + date.toISOString()}>
+                        return <ListItem key={course.name + date.toISODate()}>
                             <ListItemText primary={days2[0].assessment} />
                         </ListItem>
                     } else {
-                        return <ListItem key={course.name + date.toISOString()}>
+                        return <ListItem key={course.name + date.toISODate()}>
                             <ListItemText primary="{null}" />
                         </ListItem>
                     }
@@ -55,13 +48,13 @@ function Row({ date, courses, tags, assessments }: RowProps) {
 interface TableProps {
     courses: Course[];
     onSave: (course: Course) => void;
-    fromDate: Date;
-    toDate: Date;
+    fromDate: DateTime;
+    toDate: DateTime;
 }
 
 export default function ListTable({courses, onSave, fromDate, toDate}: TableProps) {
 
-    const [dates, setDates] = useState<Moment[]>([])
+    const [dates, setDates] = useState<DateTime[]>([])
 
     React.useEffect(() => {
         setDates(getDateList())
@@ -71,12 +64,11 @@ export default function ListTable({courses, onSave, fromDate, toDate}: TableProp
         if ((fromDate == null) || (toDate == null)) {
             return []
         }
-        let result: Moment[] = []
-        let startDate = moment(new Date(fromDate));
-        let stopDate = moment(toDate);
-        while (startDate.isBefore(stopDate)) {
-            result.push(moment(startDate))
-            startDate.add(1, 'days')
+        let result: DateTime[] = [];
+        let date = fromDate;
+        while (date <= toDate) {
+            result.push(date);
+            date = date.plus({days: 1})
         }
         return result
     }
@@ -94,7 +86,7 @@ export default function ListTable({courses, onSave, fromDate, toDate}: TableProp
                         </ListItem>
                     })}
                 </List>
-                {dates.map(date => <Row key={date.toISOString()} date={date} courses={courses} tags={[]} assessments={[]}/>)}
+                {dates.map(date => <Row key={date.toISODate()} date={date} courses={courses} tags={[]} assessments={[]}/>)}
             </Stack>
         </Box>
     )

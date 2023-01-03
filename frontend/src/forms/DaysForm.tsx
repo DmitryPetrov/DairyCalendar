@@ -4,7 +4,7 @@ import {Box, Button, Stack, TextField} from "@mui/material";
 import {Day} from "../model/Day";
 import DayForm from "./DayForm";
 import {getCourseList, postDays} from "../model/api"
-import moment from "moment";
+import {DateTime} from "luxon";
 
 
 interface CourseFormProps {
@@ -28,7 +28,7 @@ export default function DaysForm({onSave, onCancel}: CourseFormProps) {
     React.useEffect(() => {setCourses(getCourseList())}, []);
 
     const handleButton = (day: Day) => {
-        day.date = new Date(date);
+        day.date = DateTime.fromISO(date);
         let updatedDays;
         if (days.filter(e => e.courseId === day.courseId).length > 0) {
             updatedDays = days.map(old => old.courseId === day.courseId ? day : old);
@@ -50,7 +50,7 @@ export default function DaysForm({onSave, onCancel}: CourseFormProps) {
                     variant="outlined"
                     value={date}
                     onChange={(e) => setDate(e.target.value)}/>
-                <DayForm courses={courses} date={moment(date)} onSave={handleButton} onCancel={() => {}}/>
+                <DayForm courses={courses} date={DateTime.fromISO(date)} onSave={handleButton} onCancel={() => {}}/>
             </Stack>
         </Box>
     )

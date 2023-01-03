@@ -1,12 +1,11 @@
-import React, {SyntheticEvent, useState} from "react";
+import React from "react";
 import {Course} from "../model/Course";
 import {List} from "@mui/material";
 import {Day} from "../model/Day";
-import DayCourseForm from "./DayCourseForm";
-import {Moment} from "moment/moment";
+import {DateTime} from "luxon";
 
 interface CourseFormProps {
-    date: Moment
+    date: DateTime
     courses: Course[];
     onSave: (day: Day) => void;
     onCancel: () => void;

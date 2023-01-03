@@ -3,19 +3,19 @@ import Box from '@mui/material/Box';
 import {Course} from "../model/Course";
 import {DataGrid, GridCellParams, GridColDef} from '@mui/x-data-grid';
 import moment from "moment";
-import axios from "axios/index";
+import {DateTime} from "luxon";
 
 
 interface TableProps {
     courses: Course[];
     onSave: (course: Course) => void;
-    fromDate: Date;
-    toDate: Date;
+    fromDate: DateTime;
+    toDate: DateTime;
 }
 
 export default function TableView({courses, onSave, fromDate, toDate}: TableProps) {
 
-    function getColumns(fromDate: Date, toDate: Date) {
+    function getColumns() {
         let columns: GridColDef[] = [
             {
                 field: 'name',
@@ -28,7 +28,7 @@ export default function TableView({courses, onSave, fromDate, toDate}: TableProp
         let stopDate = moment(toDate);
         while (startDate.isBefore(stopDate)) {
             startDate.add(1, 'days')
-            const date = startDate.toDate().toISOString().split("T")[0];
+            const date = startDate.toISOString().split("T")[0];
             columns.push(
                 {
                     field: date,
@@ -51,10 +51,10 @@ export default function TableView({courses, onSave, fromDate, toDate}: TableProp
             let stopDate = moment(toDate);
             while (startDate.isBefore(stopDate)) {
                 startDate.add(1, 'days')
-                const dateString = startDate.toDate().toISOString().split("T")[0];
+                const dateString = startDate.toISOString().split("T")[0];
 
                 let dateObj: any;
-                let days = courses[i].days.filter(day => day.date.toISOString().split("T")[0] === dateString);
+                let days = courses[i].days.filter(day => day.date.toISODate() === dateString);
                 if ((Array.isArray(days)) && (days.length == 1)) {
                     dateObj = { [dateString]: days[0].assessment}
                 } else {
@@ -74,7 +74,7 @@ export default function TableView({courses, onSave, fromDate, toDate}: TableProp
             <DataGrid
                 rowHeight={25}
                 rows={getRows()}
-                columns={getColumns(fromDate, toDate)}
+                columns={getColumns()}
                 pageSize={courses.length}
                 rowsPerPageOptions={[courses.length]}
                 checkboxSelection

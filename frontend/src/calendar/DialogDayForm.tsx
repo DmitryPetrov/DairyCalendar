@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {useState} from 'react';
 import {Course} from "../model/Course";
-import moment, {Moment} from "moment/moment";
+import {DateTime} from "luxon";
 import {Button, Dialog, DialogActions, DialogContent, DialogTitle, List} from "@mui/material";
 import DayCourseForm from "../forms/DayCourseForm";
 import {postDays} from "../model/api"
@@ -10,19 +10,17 @@ import {Day} from "../model/Day";
 interface RowProps {
     open: boolean;
     handleClose: () => void;
-    date: Moment;
+    date: DateTime;
     courses: Course[];
 }
 
 export default function DialogDayForm({ open, handleClose, date, courses}: RowProps) {
 
     const [days, setDays] = useState<Day[]>([]);
-
     function sendDays() {
         postDays(days)
         closeDialog();
     }
-
     function closeDialog() {
         setEmptyToZero(false);
         handleClose();
@@ -35,7 +33,6 @@ export default function DialogDayForm({ open, handleClose, date, courses}: RowPr
         } else {
             updatedDays = [...days, day];
         }
-        console.log(updatedDays)
         setDays(updatedDays)
     };
 
@@ -43,13 +40,13 @@ export default function DialogDayForm({ open, handleClose, date, courses}: RowPr
 
     const handleEmptyToZero = () => {
         const days: Day[] = courses.flatMap(course => {
-            const day = course.days.find(day => moment(day.date).isSame(date, 'day'));
+            const day = course.days.find(day => day.date.hasSame(date, 'day'));
             if (day == undefined) {
                 return [new Day({
                     courseId: course.id,
                     courseName: course.name,
                     assessment: 0,
-                    date: date.toDate()
+                    date: date.toISODate()
                 })];
             } else {
                 return []
@@ -61,11 +58,9 @@ export default function DialogDayForm({ open, handleClose, date, courses}: RowPr
         setDays(days);
     }
 
-
-
     return (
         <Dialog open={open} onClose={closeDialog}>
-            <DialogTitle>{date.toISOString().split("T")[0]}</DialogTitle>
+            <DialogTitle>{date.toISODate()}</DialogTitle>
             <DialogContent>
                 <List dense={true}>
                     {courses.map(course =>

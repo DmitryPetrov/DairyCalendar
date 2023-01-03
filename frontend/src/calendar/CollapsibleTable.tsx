@@ -13,9 +13,7 @@ import Paper from '@mui/material/Paper';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import {Course} from "../model/Course";
-import {GridColDef} from "@mui/x-data-grid";
-import moment from "moment/moment";
-import {Divider} from "@mui/material";
+import {DateTime} from "luxon";
 
 interface RowProps {
     name: string;
@@ -73,8 +71,8 @@ function Row({ name, description, tags, assessments }: RowProps) {
 interface TableProps {
     courses: Course[];
     onSave: (course: Course) => void;
-    fromDate: Date;
-    toDate: Date;
+    fromDate: DateTime;
+    toDate: DateTime;
 }
 
 export default function CollapsibleTable({courses, onSave, fromDate, toDate}: TableProps) {
@@ -82,11 +80,11 @@ export default function CollapsibleTable({courses, onSave, fromDate, toDate}: Ta
     function getColumns() {
         let columns: any[] = [];
         columns.push(<TableCell key="Course name">Course name</TableCell>)
-        let startDate = moment(fromDate);
-        let stopDate = moment(toDate);
-        while (startDate.isBefore(stopDate)) {
-            startDate.add(1, 'days')
-            const date = startDate.toDate().toISOString().split("T")[0];
+        let startDate = fromDate;
+        let stopDate = toDate;
+        while (startDate <= (stopDate)) {
+            startDate.plus({day: 1})
+            const date = startDate.toISODate();
             columns.push(
                 <React.Fragment>
                     <TableCell align="center" key={date}>{date}</TableCell>
@@ -98,13 +96,13 @@ export default function CollapsibleTable({courses, onSave, fromDate, toDate}: Ta
 
     function getDates(course: Course) {
         let result: (number | null)[] = []
-        let startDate = moment(fromDate);
-        let stopDate = moment(toDate);
-        while (startDate.isBefore(stopDate)) {
-            startDate.add(1, 'days')
-            const dateString = startDate.toDate().toISOString().split("T")[0];
+        let startDate = fromDate;
+        let stopDate = toDate;
+        while (startDate < stopDate) {
+            startDate.plus({day: 1})
+            const dateString = startDate.toISODate();
 
-            let days = course.days.filter(day => day.date.toISOString().split("T")[0] === dateString);
+            let days = course.days.filter(day => day.date.toISODate() === dateString);
             if ((Array.isArray(days)) && (days.length == 1)) {
                 result.push(days[0].assessment)
             } else {

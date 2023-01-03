@@ -1,17 +1,11 @@
 import React, {useEffect} from "react";
 import {Course} from "../model/Course";
-import {
-    ListItem,
-    ListItemText,
-    ToggleButton,
-    ToggleButtonGroup
-} from "@mui/material";
+import {ListItem, ListItemText, ToggleButton, ToggleButtonGroup} from "@mui/material";
 import {Day} from "../model/Day";
-import {Moment} from "moment/moment";
-import moment from "moment";
+import {DateTime} from "luxon";
 
 interface CourseFormProps {
-    date: Moment;
+    date: DateTime;
     course: Course;
     handleAssessment: (day: Day) => void;
     setUndefinedAssessmentToZero: boolean;
@@ -23,13 +17,13 @@ export default function DayCourseForm({date, course, handleAssessment, setUndefi
             courseId: course.id,
             courseName: course.name,
             assessment: value,
-            date: date.toDate()
+            date: date.toISODate()
         })
         handleAssessment(day)
     };
 
     const [alignment, setAlignment] = React.useState<number | undefined>(
-        course.days.find(day => moment(day.date).isSame(date))?.assessment
+        course.days.find(day => day.date.hasSame(date, 'day'))?.assessment
     );
 
     useEffect(() => {
