@@ -13,7 +13,7 @@ interface RowProps {
     assessments: (number | null)[];
 }
 
-function Row({ date, courses, tags, assessments }: RowProps) {
+function Row({ date, courses}: RowProps) {
     const [open, setOpen] = React.useState(false);
     const handleClickOpen = () => {
         setOpen(true);
@@ -47,12 +47,11 @@ function Row({ date, courses, tags, assessments }: RowProps) {
 
 interface TableProps {
     courses: Course[];
-    onSave: (course: Course) => void;
-    fromDate: DateTime;
-    toDate: DateTime;
+    fromDate: (DateTime | undefined);
+    toDate: (DateTime | undefined);
 }
 
-export default function ListTable({courses, onSave, fromDate, toDate}: TableProps) {
+export default function ListTable({courses, fromDate, toDate}: TableProps) {
 
     const [dates, setDates] = useState<DateTime[]>([])
 
@@ -61,7 +60,7 @@ export default function ListTable({courses, onSave, fromDate, toDate}: TableProp
     }, [fromDate, toDate])
 
     function getDateList() {
-        if ((fromDate == null) || (toDate == null)) {
+        if ((fromDate == undefined) || (toDate == undefined)) {
             return []
         }
         let result: DateTime[] = [];

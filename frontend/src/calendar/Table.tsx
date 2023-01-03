@@ -4,7 +4,7 @@ import axios from "axios";
 import ListTable from "./ListTable";
 import {DateTime} from "luxon";
 
-const params ='fromDate=2022-12-30&toDate=2022-12-31';
+const params ='fromDate=2022-12-20&toDate=2023-01-03';
 const url = `http://localhost:8181/course`;
 
 
@@ -13,8 +13,8 @@ interface TableProps {
 }
 function Table({saveCourses}: TableProps) {
     const [courses, setCourses] = useState<Course[]>([])
-    const [fromDate, setFromDate] = useState<DateTime | null>(null)
-    const [toDate, setToDate] = useState<DateTime | null>(null)
+    const [fromDate, setFromDate] = useState<DateTime | undefined>(undefined)
+    const [toDate, setToDate] = useState<DateTime | undefined>(undefined)
 
     React.useEffect(() => {
         axios
@@ -35,8 +35,7 @@ function Table({saveCourses}: TableProps) {
             });
     }, []);
 
-    // @ts-ignore
-    return <ListTable courses={courses} onSave={() => {}} fromDate={fromDate} toDate={toDate}/>
+    return <ListTable courses={courses} fromDate={fromDate} toDate={toDate}/>
 }
 
 export default Table;
