@@ -55,9 +55,7 @@ export default function ListTable({courses, fromDate, toDate}: TableProps) {
 
     const [dates, setDates] = useState<DateTime[]>([])
 
-    React.useEffect(() => {
-        setDates(getDateList())
-    }, [fromDate, toDate])
+    React.useEffect(() => {setDates(getDateList())}, [courses, fromDate, toDate])
 
     function getDateList() {
         if ((fromDate == undefined) || (toDate == undefined)) {

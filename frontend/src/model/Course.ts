@@ -1,7 +1,6 @@
 import {Day} from "./Day";
 
 export class Course {
-
     id: number | undefined;
     name: string = '';
     description: string = '';

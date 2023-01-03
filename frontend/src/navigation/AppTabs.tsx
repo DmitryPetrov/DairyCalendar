@@ -1,33 +1,22 @@
-import React, {useState} from 'react';
+import React from 'react';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
 import TabPanel from "./TabPanel";
 import Table from "../calendar/Table";
 import CourseForm from "../forms/CourseForm";
-import axios from "axios";
 import {Course} from "../model/Course";
-import DaysForm from "../forms/DaysForm";
+import {postCourse} from "../model/api";
 
 export default function AppTabs() {
-    const [courses, setCourses] = useState<Course[]>([])
-
     const [value, setValue] = React.useState(0);
 
     const handleChange = (event: React.SyntheticEvent, newValue: number) => {
         setValue(newValue);
     };
 
-    const url = `http://localhost:8181/course`;
     function saveNewCourse(course: Course) {
-        axios
-            .post(url, course.toPostPayload())
-            .catch((error: TypeError) => {
-                console.log('log client error ' + error);
-                throw new Error(
-                    'There was an error retrieving the projects. Please try again.'
-                );
-            });
+        postCourse(course);
     };
 
     return (
@@ -40,13 +29,12 @@ export default function AppTabs() {
                 </Tabs>
             </Box>
             <TabPanel value={value} index={0}>
-                <Table saveCourses={setCourses}/>
+                <Table/>
             </TabPanel>
             <TabPanel value={value} index={1}>
                 <CourseForm onSave={saveNewCourse} onCancel={() => {}}/>
             </TabPanel>
             <TabPanel value={value} index={2}>
-                <DaysForm courses={courses} onSave={() => {}} onCancel={() => {}}/>
             </TabPanel>
         </Box>
     );
