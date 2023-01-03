@@ -28,17 +28,12 @@ function Row({ date, courses}: RowProps) {
                     <ListItemText primary={date.toISODate()} />
                 </ListItemButton>
                 {courses.map(course => {
-                    let days2 = course.days.filter(day => day.date.hasSame(date, 'day'));
-
-                    if ((Array.isArray(days2)) && (days2.length === 1)) {
-                        return <ListItem key={course.name + date.toISODate()}>
-                            <ListItemText primary={days2[0].assessment} />
-                        </ListItem>
-                    } else {
-                        return <ListItem key={course.name + date.toISODate()}>
-                            <ListItemText primary="{null}" />
-                        </ListItem>
-                    }
+                    let day = course.days.filter(day => day.date.hasSame(date, 'day'));
+                    const data = day[0]?.assessment ?? "?";
+                    const color = data > 0 ? "#81c784" : "#ffb74d";
+                    return <ListItem key={course.name + date.toISODate()} style={{backgroundColor: color}}>
+                        <ListItemText primary={data} />
+                    </ListItem>
                 })}
                 <DialogDayForm open={open} handleClose={handleClose} date={date} courses={courses}/>
             </List>
