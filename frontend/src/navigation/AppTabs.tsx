@@ -7,6 +7,7 @@ import Table from "../calendar/Table";
 import CourseForm from "../forms/CourseForm";
 import {Course} from "../model/Course";
 import {postCourse} from "../model/api";
+import LoginForm from "../forms/Login";
 
 export default function AppTabs() {
     const [value, setValue] = React.useState(0);
@@ -25,7 +26,7 @@ export default function AppTabs() {
                 <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
                     <Tab label="Calendar" id="0" />
                     <Tab label="Add Course" id="1" />
-                    <Tab label="Add Day" id="2" />
+                    <Tab label="Login" id="2" />
                 </Tabs>
             </Box>
             <TabPanel value={value} index={0}>
@@ -35,6 +36,7 @@ export default function AppTabs() {
                 <CourseForm onSave={saveNewCourse} onCancel={() => {}}/>
             </TabPanel>
             <TabPanel value={value} index={2}>
+                <LoginForm/>
             </TabPanel>
         </Box>
     );

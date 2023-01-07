@@ -10,12 +10,10 @@ import net.personal.dairycalendar.service.CourseService;
 import net.personal.dairycalendar.service.TagService;
 import net.personal.dairycalendar.storage.entity.CourseEntity;
 import net.personal.dairycalendar.storage.repository.CourseRepository;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -31,7 +29,7 @@ public class CourseController {
     private final TagService tagService;
     private final CourseMapper courseMapper;
 
-    @GetMapping(value = "/course")
+    @GetMapping(value = "api/course")
     public ResponseEntity<CoursesDto> getUsersCourses(
             @RequestParam(required = false) LocalDate fromDate,
             @RequestParam(required = false) LocalDate toDate,
@@ -47,6 +45,7 @@ public class CourseController {
             tags = Set.of();
         }
         List<CourseDto> result = courseService.getCoursesForCurrentUser(fromDate, toDate, tags);
+        System.out.println(SecurityContextHolder.getContext().getAuthentication());
 
         return ResponseEntity
                 .status(HttpStatus.OK)
@@ -54,7 +53,7 @@ public class CourseController {
                 .body(new CoursesDto(result, fromDate, toDate));
     }
 
-    @GetMapping(value = "/courseList")
+    @GetMapping(value = "api/courseList")
     public ResponseEntity<List<CourseDto>> getUsersCoursesList() {
         List<CourseDto> result = courseService.getCoursesForCurrentUser();
         return ResponseEntity
@@ -63,7 +62,7 @@ public class CourseController {
                 .body(result);
     }
 
-    @PostMapping(value = "/course")
+    @PostMapping(value = "api/course")
     public ResponseEntity<IdDto> addCourse(@RequestBody CourseDto courseDto) {
         CourseEntity entity = courseMapper.toEntity(courseDto);
         entity.setTags(tagService.getTags(courseDto.getTags()));

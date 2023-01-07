@@ -16,7 +16,7 @@ public class AppUserEntity extends BaseEntity {
 
     @Column(unique = true)
     private String login;
-    private byte[] password;
+    private String password;
 
     @Setter(AccessLevel.PRIVATE)
     @OneToMany(mappedBy="user", orphanRemoval = false, fetch = FetchType.LAZY)

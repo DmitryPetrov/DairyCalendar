@@ -4,7 +4,7 @@ import {Day} from "./Day";
 import {GetCoursesRequestParams} from "./GetCoursesRequestParams";
 import {DateTime} from "luxon";
 
-const URL = 'http://localhost:8181';
+const URL = 'http://localhost:8181/api';
 export const DATE_FORMAT = "yyyy-MM-dd"
 
 export const getCourses = (
@@ -45,6 +45,16 @@ export const postCourse = (course: Course) => {
     const url = URL + `/course`;
     axios
         .post(url, course.toPostPayload())
+        .catch((error: TypeError) => {handleError(error)});
+}
+
+export const postLogin = (credentials: {username: string, password: string}) => {
+    const url = `http://localhost:8181/login/process`;
+    axios
+        .post(url, null,{params:credentials})
+        .then(response => {
+            console.log(response)
+        })
         .catch((error: TypeError) => {handleError(error)});
 }
 
