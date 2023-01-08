@@ -1,6 +1,6 @@
 import React, {SyntheticEvent, useState} from "react";
 import {Box, Button, Stack, TextField} from "@mui/material";
-import {postLogin} from "../model/api";
+import {postLogin, postLogout} from "../model/api";
 
 export default function LoginForm() {
     const handleSubmit = (event: SyntheticEvent) => {
@@ -10,6 +10,11 @@ export default function LoginForm() {
             password: password
         };
         postLogin(credentials)
+    };
+
+    const handleLogout = (event: SyntheticEvent) => {
+        event.preventDefault();
+        postLogout()
     };
 
     const [login, setLogin] = useState<string>("")
@@ -32,6 +37,7 @@ export default function LoginForm() {
                     onChange={(e) => setPassword(e.target.value)}/>
                 <div>
                     <Button variant="contained" onClick={handleSubmit}>Login</Button>
+                    <Button variant="contained" onClick={handleLogout}>Logout</Button>
                 </div>
             </Stack>
         </Box>

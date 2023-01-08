@@ -25,7 +25,7 @@ function Row({ date, courses}: RowProps) {
     return (
             <List dense={true}>
                 <ListItemButton onClick={handleClickOpen}>
-                    <ListItemText primary={date.toISODate()} />
+                    <ListItemText primary={date.toISODate().split("-")[2]} />
                 </ListItemButton>
                 {courses.map(course => {
                     let day = course.days.filter(day => day.date.hasSame(date, 'day'));
@@ -74,7 +74,8 @@ export default function ListTable({courses, fromDate, toDate}: TableProps) {
                     </ListItem>
                     {courses.map(course => {
                         return <ListItem key={course.name}>
-                            <ListItemText primary={course.name} />
+                            <ListItemText primary={course.name}  sx={{ width: '20%' }}/>
+                            <ListItemText primary={course.tags} />
                         </ListItem>
                     })}
                 </List>

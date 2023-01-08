@@ -4,6 +4,10 @@ import {Day} from "./Day";
 import {GetCoursesRequestParams} from "./GetCoursesRequestParams";
 import {DateTime} from "luxon";
 
+const client = axios.create({
+    withCredentials: true,
+});
+
 const URL = 'http://localhost:8181/api';
 export const DATE_FORMAT = "yyyy-MM-dd"
 
@@ -11,7 +15,7 @@ export const getCourses = (
     params: GetCoursesRequestParams,
     readPayload: (courses: Course[], fromDate: DateTime, toDate: DateTime) => void
 ) => {
-    axios
+    client
         .get(URL + '/course', {params: params})
         .then(response => {
             readPayload(
@@ -26,7 +30,7 @@ export const getCourses = (
 export const getCourseList = () => {
     const url = URL + `/courseList`;
     let courses: Course[] = [];
-    axios
+    client
         .get(url)
         .then(response => {courses = response.data.map((item: any) => new Course(item))})
         .catch((error: TypeError) => {handleError(error)});
@@ -35,7 +39,7 @@ export const getCourseList = () => {
 
 export const postDays = (days: Day[]) => {
     const url = URL + `/day`;
-    axios
+    client
         .post(url, days.map(item => item.toPostPayload()))
         .then(response => console.log(response))
         .catch((error: TypeError) => {handleError(error)});
@@ -43,17 +47,27 @@ export const postDays = (days: Day[]) => {
 
 export const postCourse = (course: Course) => {
     const url = URL + `/course`;
-    axios
+    client
         .post(url, course.toPostPayload())
         .catch((error: TypeError) => {handleError(error)});
 }
 
 export const postLogin = (credentials: {username: string, password: string}) => {
     const url = `http://localhost:8181/login/process`;
-    axios
+    client
         .post(url, null,{params:credentials})
         .then(response => {
             console.log(response)
+        })
+        .catch((error: TypeError) => {handleError(error)});
+}
+
+export const postLogout = () => {
+    const url = `http://localhost:8181/logout`;
+    client
+        .post(url, )
+        .then(response => {
+            console.log(JSON.stringify(response))
         })
         .catch((error: TypeError) => {handleError(error)});
 }

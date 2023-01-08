@@ -25,17 +25,8 @@ public class SecurityConfig {
         return httpSecurity
                 .csrf().disable()
                 .cors()
-                .configurationSource(corsConfigurationSource())
+                    .configurationSource(corsConfigurationSource())
                 .and()
-/*                .authorizeHttpRequests()
-                    .requestMatchers("/index**", "/static/**", "/*.js", "/*.json", "/*.ico").permitAll()
-                    .requestMatchers("/public").permitAll()
-                    .requestMatchers("/secured").authenticated()
-                    .requestMatchers("/api/**").authenticated()
-                    .requestMatchers("/user").hasRole("USER")
-                    .requestMatchers("/admin").hasRole("ADMIN")
-                    .anyRequest().denyAll()
-                .and()*/
                 .authorizeHttpRequests((authorizeHttpRequests) ->
                     authorizeHttpRequests
                             .requestMatchers("/index**", "/static/**", "/*.js", "/*.json", "/*.ico").permitAll()
@@ -75,7 +66,7 @@ public class SecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000"));
         configuration.setAllowedMethods(Arrays.asList("GET","POST"));
-        configuration.setAllowedHeaders(Arrays.asList("*"));
+        configuration.setAllowCredentials(true);
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
