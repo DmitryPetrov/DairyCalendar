@@ -11,15 +11,17 @@ import java.util.Set;
 @Getter
 @Setter
 @Entity
-@Table(name = "Course",
-        uniqueConstraints = @UniqueConstraint(columnNames = {"appUser_id", "name"}))
+@Table(name = "course",
+        uniqueConstraints = @UniqueConstraint(columnNames = {"app_user_id", "name"}))
 public class CourseEntity extends BaseEntity{
 
+    @Column(name = "name")
     private String name;
+    @Column(name = "description")
     private String description;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name="appUser_id")
+    @JoinColumn(name="app_user_id")
     private AppUserEntity user;
 
     @OneToMany(mappedBy="course", fetch = FetchType.LAZY)

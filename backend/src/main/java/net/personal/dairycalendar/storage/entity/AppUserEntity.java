@@ -11,11 +11,12 @@ import java.util.Set;
 @Getter
 @Setter
 @Entity
-@Table(name = "AppUser")
+@Table(name = "app_user")
 public class AppUserEntity extends BaseEntity {
 
-    @Column(unique = true)
+    @Column(name = "login", unique = true)
     private String login;
+    @Column(name = "password")
     private String password;
 
     @Setter(AccessLevel.PRIVATE)
@@ -24,7 +25,7 @@ public class AppUserEntity extends BaseEntity {
 
     @ElementCollection
     @CollectionTable(name = "order_course",
-            joinColumns = {@JoinColumn(name = "appUser_id", referencedColumnName = "id")})
+            joinColumns = {@JoinColumn(name = "app_user_id", referencedColumnName = "id")})
     @MapKeyColumn(name = "course_id")
     @Column(name = "number")
     private Map<Long, Integer> coursesOrder;

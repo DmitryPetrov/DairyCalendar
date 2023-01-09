@@ -9,7 +9,7 @@ import java.time.LocalDate;
 @Getter
 @Setter
 @Entity
-@Table(name = "Day",
+@Table(name = "day",
         uniqueConstraints = @UniqueConstraint(columnNames = {"course_id", "date"}))
 public class DayEntity extends BaseEntity {
 
@@ -17,8 +17,10 @@ public class DayEntity extends BaseEntity {
     @JoinColumn(name="course_id", nullable=false)
     private CourseEntity course;
 
+    @Column(name = "date")
     private LocalDate date;
 
+    @Column(name = "assessment")
     private int assessment;
 
 }
