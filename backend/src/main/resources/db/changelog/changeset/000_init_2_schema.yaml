@@ -1,0 +1,98 @@
+databaseChangeLog:
+  - changeSet:
+      id: 000_init_2_schema
+      author: dmitry_petrov
+      changes:
+        - createTable:
+            tableName: course
+            columns:
+              - column:
+                  name: id
+                  type: java.sql.Types.BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: course_pk
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: java.sql.Types.TIMESTAMP
+                  defaultValue: now()
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: java.sql.Types.TIMESTAMP
+                  defaultValue: now()
+                  constraints:
+                    nullable: false
+              - column:
+                  name: title
+                  type: java.sql.Types.VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: description
+                  type: java.sql.Types.VARCHAR(1000)
+              - column:
+                  name: app-user_id
+                  type: java.sql.Types.BIGINT
+                  constraints:
+                    nullable: false
+
+        - addForeignKeyConstraint:
+            constraintName: app-user_course_fk
+            baseTableName: course
+            baseColumnNames: app-user_id
+            referencedTableName: app-user
+            referencedColumnNames: id
+            onUpdate: CASCADE
+            onDelete: NO ACTION
+
+        - createTable:
+            tableName: day
+            columns:
+              - column:
+                  name: id
+                  type: java.sql.Types.BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: day_pk
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: java.sql.Types.TIMESTAMP
+                  defaultValue: now()
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: java.sql.Types.TIMESTAMP
+                  defaultValue: now()
+                  constraints:
+                    nullable: false
+              - column:
+                  name: date
+                  type: java.sql.Types.DATE
+                  constraints:
+                    nullable: false
+              - column:
+                  name: assessment
+                  type: java.sql.Types.INTEGER
+                  constraints:
+                    nullable: false
+              - column:
+                  name: course_id
+                  type: java.sql.Types.BIGINT
+                  constraints:
+                    nullable: false
+
+        - addForeignKeyConstraint:
+            constraintName: course_day_fk
+            baseTableName: day
+            baseColumnNames: course_id
+            referencedTableName: course
+            referencedColumnNames: id
+            onUpdate: CASCADE
+            onDelete: NO ACTION

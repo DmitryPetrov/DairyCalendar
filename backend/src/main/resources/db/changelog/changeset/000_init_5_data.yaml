@@ -1,0 +1,36 @@
+databaseChangeLog:
+  - changeSet:
+      id: 000_init_5_data
+      author: dmitry_petrov
+      changes:
+        - insert:
+            tableName: role
+            columns:
+              - column:
+                  name: id
+                  value: '1'
+              - column:
+                  name: title
+                  value: 'ADMIN'
+        - insert:
+            tableName: role
+            columns:
+              - column:
+                  name: id
+                  value: '2'
+              - column:
+                  name: title
+                  value: 'USER'
+
+        - insert:
+            tableName: app-user
+            columns:
+              - column:
+                  name: role_id
+                  value: '1'
+              - column:
+                  name: username
+                  value: 'admin'
+              - column:
+                  name: password
+                  value: '$2a$10$wMGg.JxeBG.Ju3ynkYIICuxiY9T3lktWL3z.ZWLL4p64/.YnIdobm'

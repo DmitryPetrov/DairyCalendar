@@ -1,5 +1,6 @@
 package net.personal.dairycalendar.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 import java.util.Set;
@@ -8,7 +9,8 @@ import java.util.Set;
 public class CourseDto {
 
     long id;
-    String name;
+    @JsonProperty("name")
+    String title;
     String description;
     Set<String> tags;
     Set<DayDto> days;

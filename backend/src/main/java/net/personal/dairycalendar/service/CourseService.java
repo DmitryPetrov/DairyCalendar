@@ -2,13 +2,11 @@ package net.personal.dairycalendar.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import net.personal.dairycalendar.dto.DayDto;
 import net.personal.dairycalendar.dto.CourseDto;
 import net.personal.dairycalendar.dto.mapper.CourseMapper;
 import net.personal.dairycalendar.dto.mapper.DayMapper;
-import net.personal.dairycalendar.storage.entity.DayEntity;
 import net.personal.dairycalendar.storage.entity.CourseEntity;
-import net.personal.dairycalendar.storage.entity.TagEntity;
+import net.personal.dairycalendar.storage.entity.DayEntity;
 import net.personal.dairycalendar.storage.repository.CourseRepository;
 import net.personal.dairycalendar.storage.repository.DayRepository;
 import net.personal.dairycalendar.storage.specification.CourseDaySpecifications;
@@ -32,8 +30,8 @@ public class CourseService {
 
     public List<CourseDto> getCoursesForCurrentUser(LocalDate fromDate, LocalDate toDate, Set<String> tags) {
         Specification<DayEntity> specification = Specification
-                .where(CourseDaySpecifications.hasTags(tags))
-                .and(CourseDaySpecifications.inPeriod(fromDate, toDate));
+                //.where(CourseDaySpecifications.hasTags(tags))
+                .where(CourseDaySpecifications.inPeriod(fromDate, toDate.plusDays(1)));
 
         List<DayEntity> all = dayRepository.findAll(specification);
 
@@ -45,7 +43,7 @@ public class CourseService {
                 .stream()
                 .map(entity -> {
                     CourseDto courseDto = courseMapper.toDto(entity);
-                    courseDto.setTags(entity.getTags().stream().map(TagEntity::getTag).collect(Collectors.toSet()));
+                    //courseDto.setTags(entity.getTagCollection().getTags().stream().map(TagEntity::getTag).collect(Collectors.toSet()));
                     courseDto.setDays(
                         all.stream()
                                 .filter(day -> day.getCourse().getId() == entity.getId())
@@ -62,7 +60,7 @@ public class CourseService {
                 .stream()
                 .map(entity -> {
                     CourseDto courseDto = courseMapper.toDto(entity);
-                    courseDto.setTags(entity.getTags().stream().map(TagEntity::getTag).collect(Collectors.toSet()));
+                    //courseDto.setTags(entity.getTagCollection().getTags().stream().map(TagEntity::getTag).collect(Collectors.toSet()));
                     return courseDto;
                 })
                 .collect(Collectors.toList());

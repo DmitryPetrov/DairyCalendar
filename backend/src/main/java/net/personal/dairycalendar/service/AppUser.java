@@ -17,7 +17,7 @@ public class AppUser implements UserDetails {
     private final Set<GrantedAuthority> authorities;
 
     public AppUser(AppUserEntity entity) {
-        this.login = entity.getLogin();
+        this.login = entity.getUsername();
         this.password = entity.getPassword();
         this.authorities = Set.of();
     }

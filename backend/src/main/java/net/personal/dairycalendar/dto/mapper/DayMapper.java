@@ -4,7 +4,6 @@ import net.personal.dairycalendar.dto.DayDto;
 import net.personal.dairycalendar.storage.entity.DayEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.springframework.stereotype.Component;
 
 @Mapper(componentModel = "spring")
 public interface DayMapper {
@@ -16,6 +15,6 @@ public interface DayMapper {
     DayEntity toEntity(DayDto dto);
 
     @Mapping(target = "courseId", source = "course.id")
-    @Mapping(target = "courseName", source = "course.name")
+    @Mapping(target = "courseName", source = "course.title")
     DayDto toDto(DayEntity dayEntity);
 }

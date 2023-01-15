@@ -1,11 +1,11 @@
 package net.personal.dairycalendar.storage.specification;
 
-import net.personal.dairycalendar.storage.entity.*;
+import net.personal.dairycalendar.storage.entity.DayEntity;
+import net.personal.dairycalendar.storage.entity.DayEntity_;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.time.LocalDate;
 import java.util.Optional;
-import java.util.Set;
 
 public class CourseDaySpecifications {
 
@@ -16,7 +16,7 @@ public class CourseDaySpecifications {
                 .between(root.get(DayEntity_.DATE), startDate, endDate);
     }
 
-    public static Specification<DayEntity> hasTags(Set<String> tags) {
+/*    public static Specification<DayEntity> hasTags(Set<String> tags) {
         return (root, query, criteriaBuilder) -> {
             if (tags.isEmpty()) {
                 return null;
@@ -25,5 +25,5 @@ public class CourseDaySpecifications {
                 .in(root.get(DayEntity_.COURSE).get(CourseEntity_.TAGS).get(TagEntity_.TAG))
                 .value(tags);
         };
-    }
+    }*/
 }

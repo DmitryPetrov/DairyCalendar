@@ -4,34 +4,29 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Getter
 @Setter
 @Entity
 @Table(name = "course",
-        uniqueConstraints = @UniqueConstraint(columnNames = {"app_user_id", "name"}))
+        uniqueConstraints = @UniqueConstraint(columnNames = {"app-user_id", "title"}))
 public class CourseEntity extends BaseEntity{
 
-    @Column(name = "name")
-    private String name;
-    @Column(name = "description")
+    @Column(name = "title", length = 255)
+    private String title;
+    @Column(name = "description", length = 1000)
     private String description;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name="app_user_id")
+    @JoinColumn(name="app-user_id")
     private AppUserEntity user;
 
     @OneToMany(mappedBy="course", fetch = FetchType.LAZY)
     private List<DayEntity> days;
 
-    @ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
-    @JoinTable(
-            name = "Course_Tag",
-            joinColumns = @JoinColumn(name = "tag_id"),
-            inverseJoinColumns = @JoinColumn(name = "course_id"))
-    private Set<TagEntity> tags = new HashSet<>();
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "tag-collection_id", unique = true)
+    private TagCollectionEntity tagCollection;
 
 }

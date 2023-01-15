@@ -13,7 +13,6 @@ import net.personal.dairycalendar.storage.repository.CourseRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -65,7 +64,7 @@ public class CourseController {
     @PostMapping(value = "api/course")
     public ResponseEntity<IdDto> addCourse(@RequestBody CourseDto courseDto) {
         CourseEntity entity = courseMapper.toEntity(courseDto);
-        entity.setTags(tagService.getTags(courseDto.getTags()));
+        //entity.setTags(tagService.getTags(courseDto.getTags()));
         courseRepository.save(entity);
         return ResponseEntity
                 .status(HttpStatus.OK)

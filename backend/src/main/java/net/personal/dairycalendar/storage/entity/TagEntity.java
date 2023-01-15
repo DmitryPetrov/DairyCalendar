@@ -15,7 +15,7 @@ import java.util.Set;
 public class TagEntity extends BaseEntity {
 
     @ManyToMany(mappedBy = "tags", fetch = FetchType.LAZY)
-    private Set<CourseEntity> courses;
+    private Set<TagCollectionEntity> courses;
 
     @Column(name = "tag")
     private String tag;
