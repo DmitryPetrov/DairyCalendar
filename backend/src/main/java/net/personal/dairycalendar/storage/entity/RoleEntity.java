@@ -1,10 +1,9 @@
 package net.personal.dairycalendar.storage.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import net.personal.dairycalendar.service.Role;
 
 @Getter
 @Setter
@@ -12,7 +11,8 @@ import lombok.Setter;
 @Table(name = "role")
 public class RoleEntity  extends BaseEntity {
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "title", length = 255)
-    private String title;
+    private Role title;
 
 }

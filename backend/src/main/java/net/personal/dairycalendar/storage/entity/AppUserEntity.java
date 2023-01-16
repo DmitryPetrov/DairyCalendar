@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.User;
 
 import java.util.Set;
 
@@ -21,6 +23,11 @@ public class AppUserEntity extends BaseEntity {
     @Setter(AccessLevel.PRIVATE)
     @OneToMany(mappedBy="user", orphanRemoval = false, fetch = FetchType.LAZY)
     private Set<CourseEntity> courses;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "role_id")
+    private RoleEntity role;
+
 /*
     @ElementCollection
     @CollectionTable(name = "order_course",
@@ -28,4 +35,24 @@ public class AppUserEntity extends BaseEntity {
     @MapKeyColumn(name = "course_id")
     @Column(name = "number")
     private Map<Long, Integer> coursesOrder;*/
+
+    public User toUser() {
+        boolean enabled = true;
+        boolean accountNonExpired = true;
+        boolean credentialsNonExpired = true;
+        boolean accountNonLocked = true;
+        return new User(
+                username,
+                password,
+                enabled,
+                accountNonExpired,
+                credentialsNonExpired,
+                accountNonLocked,
+                this.getGrantedAuthority()
+        );
+    }
+
+    public Set<GrantedAuthority> getGrantedAuthority() {
+        return Set.of(this.getRole().getTitle().getGrantedAuthority());
+    }
 }

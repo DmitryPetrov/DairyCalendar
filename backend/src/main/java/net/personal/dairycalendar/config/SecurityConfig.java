@@ -1,6 +1,7 @@
 package net.personal.dairycalendar.config;
 
 import jakarta.servlet.http.HttpServletResponse;
+import net.personal.dairycalendar.service.Role;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
@@ -33,8 +34,8 @@ public class SecurityConfig {
                             .requestMatchers("/public").permitAll()
                             .requestMatchers("/secured").authenticated()
                             .requestMatchers("/api/**").authenticated()
-                            .requestMatchers("/user").hasRole("USER")
-                            .requestMatchers("/admin").hasRole("ADMIN")
+                            .requestMatchers("/user").hasRole(Role.USER.name())
+                            .requestMatchers("/admin").hasRole(Role.ADMIN.name())
                             .anyRequest().denyAll()
                 )
                 .formLogin()
