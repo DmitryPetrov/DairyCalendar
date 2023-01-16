@@ -35,7 +35,7 @@ public class CourseController {
             @RequestParam(required = false) Set<String> tags
     ) {
         if (toDate == null) {
-            toDate = LocalDate.now().plusDays(1);
+            toDate = LocalDate.now();
         }
         if (fromDate == null) {
             fromDate = toDate.minusDays(8);
@@ -44,8 +44,6 @@ public class CourseController {
             tags = Set.of();
         }
         List<CourseDto> result = courseService.getCoursesForCurrentUser(fromDate, toDate, tags);
-        System.out.println(SecurityContextHolder.getContext().getAuthentication());
-
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .contentType(MediaType.APPLICATION_JSON)
