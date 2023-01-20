@@ -7,13 +7,16 @@ import net.personal.dairycalendar.dto.CoursesDto;
 import net.personal.dairycalendar.dto.IdDto;
 import net.personal.dairycalendar.dto.mapper.CourseMapper;
 import net.personal.dairycalendar.service.CourseService;
-import net.personal.dairycalendar.service.TagService;
 import net.personal.dairycalendar.storage.entity.CourseEntity;
 import net.personal.dairycalendar.storage.repository.CourseRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -25,7 +28,6 @@ import java.util.Set;
 public class CourseController {
     private final CourseService courseService;
     private final CourseRepository courseRepository;
-    private final TagService tagService;
     private final CourseMapper courseMapper;
 
     @GetMapping(value = "api/course")
@@ -69,6 +71,5 @@ public class CourseController {
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(new IdDto(entity.getId()));
     }
-
 
 }
