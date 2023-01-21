@@ -3,7 +3,7 @@ import {useState} from 'react';
 import {Course} from "../model/Course";
 import {DateTime} from "luxon";
 import {Button, Dialog, DialogActions, DialogContent, DialogTitle, List} from "@mui/material";
-import DayCourseForm from "../forms/DayCourseForm";
+import DayCourseForm from "./DayCourseForm";
 import {postDays} from "../model/api"
 import {Day} from "../model/Day";
 

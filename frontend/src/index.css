@@ -1,0 +1,23 @@
+.main_screen {
+    width: 100%;
+}
+
+.course_table_title {
+    max-width: 20%;
+    min-width: 20%;
+}
+
+.course_table_cell {
+    text-align: center;
+    margin-right: 4px;
+}
+
+.course_table_cell_empty {
+}
+
+.course_table_cell_zero {
+    background-color: #ffd280;
+}
+.course_table_cell_positiv {
+    background-color: palegreen;
+}

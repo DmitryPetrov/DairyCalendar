@@ -3,7 +3,7 @@ import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
 import TabPanel from "./TabPanel";
-import Table from "../calendar/Table";
+import CourseTable from "../calendar/CourseTable";
 import CourseForm from "../forms/CourseForm";
 import {Course} from "../model/Course";
 import {postCourse} from "../model/api";
@@ -18,10 +18,10 @@ export default function AppTabs() {
 
     function saveNewCourse(course: Course) {
         postCourse(course);
-    };
+    }
 
     return (
-        <Box sx={{ width: '100%' }}>
+        <Box className="main_screen">
             <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                 <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
                     <Tab label="Calendar" id="0" />
@@ -30,7 +30,7 @@ export default function AppTabs() {
                 </Tabs>
             </Box>
             <TabPanel value={value} index={0}>
-                <Table/>
+                <CourseTable/>
             </TabPanel>
             <TabPanel value={value} index={1}>
                 <CourseForm onSave={saveNewCourse} onCancel={() => {}}/>
