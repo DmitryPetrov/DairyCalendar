@@ -40,7 +40,9 @@ export default function CourseTableView({courses, dates}: TableProps) {
                     )}
                 </ListItem>
                 <Divider />
-                {courses.map(course => <CourseTableRow key={course.id} course={course} dates={dates}/>)}
+                {courses
+                    .sort((a, b) => a.position - b.position)
+                    .map(course => <CourseTableRow key={course.id} course={course} dates={dates}/>)}
                 <DialogDayForm
                     open={open}
                     handleClose={handleClose}

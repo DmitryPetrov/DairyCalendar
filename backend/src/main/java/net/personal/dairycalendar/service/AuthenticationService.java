@@ -27,9 +27,9 @@ public class AuthenticationService implements UserDetailsService {
                                 "with field [username] has value [" + username + "] in database"));
     }
 
-    public UserDetails getCurrentUser() {
+    public AppUser getCurrentUser() {
         log.debug("Get current user");
-        return (UserDetails) SecurityContextHolder
+        return (AppUser) SecurityContextHolder
                 .getContext()
                 .getAuthentication()
                 .getPrincipal();

@@ -11,6 +11,7 @@ public class CourseDto {
     long id;
     @JsonProperty("name")
     String title;
+    int position;
     String description;
     Set<String> tags;
     Set<DayDto> days;

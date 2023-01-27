@@ -10,8 +10,10 @@ import net.personal.dairycalendar.storage.entity.DayEntity;
 import net.personal.dairycalendar.storage.repository.CourseRepository;
 import net.personal.dairycalendar.storage.repository.DayRepository;
 import net.personal.dairycalendar.storage.specification.CourseDaySpecifications;
+import net.personal.dairycalendar.storage.specification.CourseSpecifications;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -27,17 +29,22 @@ public class CourseService {
     private final DayRepository dayRepository;
     private final CourseMapper courseMapper;
     private final DayMapper dayMapper;
+    private final AuthenticationService authenticationService;
 
+    @Transactional
     public List<CourseDto> getCoursesForCurrentUser(LocalDate fromDate, LocalDate toDate, Set<String> tags) {
+        Specification<CourseEntity> courseSpecification = Specification
+                .where(CourseSpecifications.fromUsers(Set.of(authenticationService.getCurrentUser().getId())));
+
+        List<CourseEntity> courses = courseRepository.findAll(courseSpecification);
+
         Specification<DayEntity> specification = Specification
-                //.where(CourseDaySpecifications.hasTags(tags))
-                .where(CourseDaySpecifications.inPeriod(fromDate, toDate.plusDays(1)));
+                .where(CourseDaySpecifications.inCourse(
+                        courses.stream().map(CourseEntity::getId).collect(Collectors.toSet())
+                       ))
+                .and(CourseDaySpecifications.inPeriod(fromDate, toDate.plusDays(1)));
 
-        List<DayEntity> all = dayRepository.findAll(specification);
-
-        Set<CourseEntity> courses = all.stream()
-                .map(DayEntity::getCourse)
-                .collect(Collectors.toSet());
+        List<DayEntity> days = dayRepository.findAll(specification);
 
         return courses
                 .stream()
@@ -45,10 +52,11 @@ public class CourseService {
                     CourseDto courseDto = courseMapper.toDto(entity);
                     //courseDto.setTags(entity.getTagCollection().getTags().stream().map(TagEntity::getTag).collect(Collectors.toSet()));
                     courseDto.setDays(
-                        all.stream()
-                                .filter(day -> day.getCourse().getId() == entity.getId())
-                                .map(dayMapper::toDto)
-                                .collect(Collectors.toSet())
+                            days
+                                    .stream()
+                                    .filter(day -> day.getCourse().getId() == entity.getId())
+                                    .map(dayMapper::toDto)
+                                    .collect(Collectors.toSet())
                     );
                     return courseDto;
                 })

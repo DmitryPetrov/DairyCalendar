@@ -1,11 +1,17 @@
 package net.personal.dairycalendar.storage.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
+import net.personal.dairycalendar.service.AppUser;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 
 import java.util.Set;
 
@@ -28,20 +34,13 @@ public class AppUserEntity extends BaseEntity {
     @JoinColumn(name = "role_id")
     private RoleEntity role;
 
-/*
-    @ElementCollection
-    @CollectionTable(name = "order_course",
-            joinColumns = {@JoinColumn(name = "app-user_id", referencedColumnName = "id")})
-    @MapKeyColumn(name = "course_id")
-    @Column(name = "number")
-    private Map<Long, Integer> coursesOrder;*/
-
-    public User toUser() {
+    public AppUser toUser() {
         boolean enabled = true;
         boolean accountNonExpired = true;
         boolean credentialsNonExpired = true;
         boolean accountNonLocked = true;
-        return new User(
+        return new AppUser(
+                id,
                 username,
                 password,
                 enabled,

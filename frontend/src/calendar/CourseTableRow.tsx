@@ -28,9 +28,9 @@ export default function CourseTableRow({dates, course}: RowProps) {
                 )}
             </ListItemButton>
             <Collapse in={open} timeout="auto" unmountOnExit>
-                <List component="div" disablePadding>
+                <List component="div" disablePadding dense={true}>
                     <ListItemButton>
-                        <ListItemText primary="expand" />
+                        <ListItemText primary={course.description} />
                     </ListItemButton>
                 </List>
             </Collapse>
