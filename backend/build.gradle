@@ -42,6 +42,8 @@ dependencies {
     annotationProcessor'org.hibernate:hibernate-jpamodelgen:6.1.6.Final'
 
     compileOnly 'org.springframework.boot:spring-boot-devtools'
+
+    implementation group: 'com.h2database', name: 'h2', version: '2.1.214'
 }
 
 tasks.named('test') {
