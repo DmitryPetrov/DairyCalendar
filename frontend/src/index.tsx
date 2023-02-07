@@ -2,8 +2,8 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
-import AppTabs from "./navigation/AppTabs";
 import {StyledEngineProvider} from "@mui/material";
+import AuthSwitcher from "./navigation/AuthSwitcher";
 
 const root = ReactDOM.createRoot(
     document.getElementById('root') as HTMLElement
@@ -11,7 +11,7 @@ const root = ReactDOM.createRoot(
 root.render(
     <React.StrictMode>
         <StyledEngineProvider injectFirst>
-            <AppTabs/>
+            <AuthSwitcher/>
         </StyledEngineProvider>
     </React.StrictMode>
 );

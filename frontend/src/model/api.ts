@@ -52,22 +52,24 @@ export const postCourse = (course: Course) => {
         .catch((error: TypeError) => {handleError(error)});
 }
 
-export const postLogin = (credentials: {username: string, password: string}) => {
+export const postLogin = (credentials: {username: string, password: string}, onSuccessLogin: () => void) => {
     const url = `http://localhost:8181/login/process`;
     client
         .post(url, null,{params:credentials})
         .then(response => {
             console.log(response)
+            onSuccessLogin();
         })
         .catch((error: TypeError) => {handleError(error)});
 }
 
-export const postLogout = () => {
+export const postLogout = (onSuccessLogout: () => void) => {
     const url = `http://localhost:8181/logout`;
     client
         .post(url, )
         .then(response => {
-            console.log(JSON.stringify(response))
+            console.log(JSON.stringify(response));
+            onSuccessLogout();
         })
         .catch((error: TypeError) => {handleError(error)});
 }
