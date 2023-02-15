@@ -4,11 +4,13 @@ import {Day} from "./Day";
 import {GetCoursesRequestParams} from "./GetCoursesRequestParams";
 import {DateTime} from "luxon";
 
+
+const URL = process.env.REACT_APP_API_ENDPOINT;
 const client = axios.create({
     withCredentials: true,
+    baseURL: URL + '/api'
 });
 
-const URL = 'http://localhost:8181/api';
 export const DATE_FORMAT = "yyyy-MM-dd"
 
 export const getCourses = (
@@ -16,7 +18,7 @@ export const getCourses = (
     readPayload: (courses: Course[], fromDate: DateTime, toDate: DateTime) => void
 ) => {
     client
-        .get(URL + '/course', {params: params})
+        .get('/course', {params: params})
         .then(response => {
             readPayload(
                 response.data.courses.map((item: any) => new Course(item)),
@@ -28,34 +30,30 @@ export const getCourses = (
 }
 
 export const getCourseList = () => {
-    const url = URL + `/courseList`;
     let courses: Course[] = [];
     client
-        .get(url)
+        .get(`/courseList`)
         .then(response => {courses = response.data.map((item: any) => new Course(item))})
         .catch((error: TypeError) => {handleError(error)});
     return courses;
 }
 
 export const postDays = (days: Day[]) => {
-    const url = URL + `/day`;
     client
-        .post(url, days.map(item => item.toPostPayload()))
+        .post(`/day`, days.map(item => item.toPostPayload()))
         .then(response => console.log(response))
         .catch((error: TypeError) => {handleError(error)});
 }
 
 export const postCourse = (course: Course) => {
-    const url = URL + `/course`;
     client
-        .post(url, course.toPostPayload())
+        .post(`/course`, course.toPostPayload())
         .catch((error: TypeError) => {handleError(error)});
 }
 
 export const postLogin = (credentials: {username: string, password: string}, onSuccessLogin: () => void) => {
-    const url = `http://localhost:8181/login/process`;
     client
-        .post(url, null,{params:credentials})
+        .post(URL + '/login/process', null,{params:credentials})
         .then(response => {
             console.log(response)
             onSuccessLogin();
@@ -64,9 +62,8 @@ export const postLogin = (credentials: {username: string, password: string}, onS
 }
 
 export const postLogout = (onSuccessLogout: () => void) => {
-    const url = `http://localhost:8181/logout`;
     client
-        .post(url, )
+        .post(URL + '/logout', )
         .then(response => {
             console.log(JSON.stringify(response));
             onSuccessLogout();

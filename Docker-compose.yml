@@ -18,9 +18,19 @@ services:
   pgadmin:
     container_name: dairy_calendar_pgadmin
     image: dpage/pgadmin4:6.9
+    depends_on:
+      - postgres
     ports:
       - "80:80"
     environment:
       PGADMIN_DEFAULT_EMAIL: admin@example.com
       PGADMIN_DEFAULT_PASSWORD: admin
 
+  app:
+    container_name: dairy_calendar_app
+    image: dairy_calendar_app:0.1
+    build: ./
+    depends_on:
+      - postgres
+    ports:
+      - "8888:8181"

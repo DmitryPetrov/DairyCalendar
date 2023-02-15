@@ -1,0 +1,7 @@
+1. npm --prefix ./frontend run build:docker
+
+2. ./gradlew bootJar
+
+3. docker stop dairy_calendar_app
+
+4. docker compose up -d --build
