@@ -13,7 +13,11 @@ import jakarta.persistence.UniqueConstraint;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.List;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -33,11 +37,47 @@ public class CourseEntity extends BaseEntity{
     @JoinColumn(name="app-user_id")
     private AppUserEntity user;
 
-    @OneToMany(mappedBy="course", fetch = FetchType.LAZY)
-    private List<DayEntity> days;
+    @OneToMany(mappedBy="course", fetch = FetchType.LAZY, orphanRemoval = true)
+    private Set<DayEntity> days = new HashSet<>();
 
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @JoinColumn(name = "tag-collection_id", unique = true)
-    private TagCollectionEntity tagCollection;
+    private TagCollectionEntity tagCollection = new TagCollectionEntity();
 
+    public CourseEntity addTags(Collection<TagEntity> tags) {
+        if (this.getTagCollection() == null) {
+            this.setTagCollection(new TagCollectionEntity());
+        }
+        this.getTagCollection().addTags(tags);
+        return this;
+    }
+
+    public Set<String> getTags() {
+        return Optional.ofNullable(this.getTagCollection())
+                .map(TagCollectionEntity::getTags)
+                .stream()
+                .flatMap(Collection::stream)
+                .map(TagEntity::getTag)
+                .collect(Collectors.toSet());
+    }
+
+    public void updateTags(Set<TagEntity> tags) {
+        Set<TagEntity> newTags = new HashSet<>(tags);
+
+        if (this.getTagCollection() == null) {
+            this.setTagCollection(new TagCollectionEntity());
+        }
+
+        Set<TagEntity> forDelete = new HashSet<>();
+        for (TagEntity entity: this.getTagCollection().getTags()) {
+            if (newTags.contains(entity)) {
+                newTags.remove(entity);
+            } else {
+                forDelete.add(entity);
+            }
+        }
+
+        this.getTagCollection().getTags().removeAll(forDelete);
+        this.addTags(newTags);
+    }
 }

@@ -53,7 +53,7 @@ export const postCourse = (course: Course) => {
 
 export const postLogin = (credentials: {username: string, password: string}, onSuccessLogin: () => void) => {
     client
-        .post(URL + '/login/process', null,{params:credentials})
+        .post('/login/process', null,{params:credentials})
         .then(response => {
             console.log(response)
             onSuccessLogin();
@@ -63,7 +63,7 @@ export const postLogin = (credentials: {username: string, password: string}, onS
 
 export const postLogout = (onSuccessLogout: () => void) => {
     client
-        .post(URL + '/logout', )
+        .post('/logout', )
         .then(response => {
             console.log(JSON.stringify(response));
             onSuccessLogout();

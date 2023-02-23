@@ -1,7 +1,9 @@
 package net.personal.dairycalendar.dto.mapper;
 
 import net.personal.dairycalendar.dto.CourseDto;
+import net.personal.dairycalendar.dto.DayDto;
 import net.personal.dairycalendar.storage.entity.CourseEntity;
+import net.personal.dairycalendar.storage.entity.DayEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
@@ -16,8 +18,9 @@ public interface CourseMapper {
     @Mapping(target = "user", ignore = true)
     CourseEntity toEntity(CourseDto dto);
 
-    @Mapping(target = "days", ignore = true)
-    @Mapping(target = "tags", ignore = true)
     CourseDto toDto(CourseEntity entity);
 
+    @Mapping(target = "courseId", source = "course.id")
+    @Mapping(target = "courseTitle", source = "course.title")
+    DayDto toDto(DayEntity dayEntity);
 }

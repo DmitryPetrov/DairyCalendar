@@ -40,21 +40,17 @@ public class SecurityConfig {
                 )
                 .formLogin()
                     .loginPage("/").permitAll()
-                    .loginProcessingUrl("/login/process").permitAll()
-                    .successHandler((request, response, authentication) -> {
-                        System.out.println("=====================auth suxxess=====================");
-                    })
-                    .failureHandler((request, response, authentication) -> {
-                        System.out.println("=====================auth NOT suxxess=====================");
-                        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                    .loginProcessingUrl("/api/login/process").permitAll()
+                    .successHandler((req, resp, auth) -> System.out.println("===login successful==="))
+                    .failureHandler((req, resp, auth) -> {
+                        System.out.println("===login unsuccessful===");
+                        resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                     })
                 .and()
                 .logout()
                     .invalidateHttpSession(true)
                     .clearAuthentication(true)
-                    .logoutSuccessHandler((request, response, authentication) -> {
-                        System.out.println("=====================logout suxxess=====================");
-                    })
+                    .logoutSuccessHandler((req, resp, auth) -> System.out.println("===logout successful==="))
                 .and()
                 .exceptionHandling()
                 .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))

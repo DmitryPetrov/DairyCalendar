@@ -15,6 +15,6 @@ public interface DayMapper {
     DayEntity toEntity(DayDto dto);
 
     @Mapping(target = "courseId", source = "course.id")
-    @Mapping(target = "courseName", source = "course.title")
+    @Mapping(target = "courseTitle", source = "course.title")
     DayDto toDto(DayEntity dayEntity);
 }
