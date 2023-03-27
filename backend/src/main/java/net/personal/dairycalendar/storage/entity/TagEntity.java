@@ -19,7 +19,7 @@ import java.util.Set;
 public class TagEntity extends BaseEntity {
 
     @ManyToMany(mappedBy = "tags", fetch = FetchType.LAZY)
-    private Set<TagCollectionEntity> courses;
+    private Set<TagCollectionEntity> collections;
 
     @Column(name = "tag", unique = true)
     private String tag;

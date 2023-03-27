@@ -9,11 +9,9 @@ import net.personal.dairycalendar.exception.RecordIsNotExistException;
 import net.personal.dairycalendar.storage.entity.AppUserEntity;
 import net.personal.dairycalendar.storage.entity.CourseEntity;
 import net.personal.dairycalendar.storage.entity.DayEntity;
-import net.personal.dairycalendar.storage.entity.TagEntity;
 import net.personal.dairycalendar.storage.repository.AppUserRepository;
 import net.personal.dairycalendar.storage.repository.CourseRepository;
 import net.personal.dairycalendar.storage.repository.DayRepository;
-import net.personal.dairycalendar.storage.repository.TagRepository;
 import net.personal.dairycalendar.storage.specification.CourseDaySpecifications;
 import net.personal.dairycalendar.storage.specification.CourseSpecifications;
 import org.springframework.data.jpa.domain.Specification;
@@ -21,7 +19,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -33,11 +30,11 @@ public class CourseService {
 
     private final CourseRepository courseRepository;
     private final DayRepository dayRepository;
-    private final TagRepository tagRepository;
     private final AppUserRepository appUserRepository;
     private final CourseMapper courseMapper;
     private final DayMapper dayMapper;
     private final AuthenticationService authenticationService;
+    private final TagService tagService;
 
     @Transactional(readOnly = true)
     public List<CourseDto> getCoursesForCurrentUser(LocalDate fromDate, LocalDate toDate, Set<String> tags) {
@@ -75,19 +72,7 @@ public class CourseService {
     @Transactional
     public long addCourse(CourseDto courseDto) {
         CourseEntity course = courseMapper.toEntity(courseDto);
-        Set<TagEntity> existedTags = tagRepository.findAllByTagIn(courseDto.getTags());
-        Set<TagEntity> newTags = courseDto
-                .getTags()
-                .stream()
-                .map(TagEntity::new)
-                .collect(Collectors.toSet());
-        newTags.removeIf(newTag -> existedTags
-                .stream()
-                .map(TagEntity::getTag)
-                .anyMatch(existedTag -> existedTag.equalsIgnoreCase(newTag.getTag())));
-        course.addTags(existedTags);
-        course.addTags(newTags);
-        tagRepository.saveAll(newTags);
+        tagService.updateTagCollection(course, courseDto.getTags());
         long currentUserId = authenticationService.getCurrentUser().getId();
         course.setUser(appUserRepository
                                .findById(currentUserId)
@@ -106,32 +91,15 @@ public class CourseService {
 
     @Transactional
     public void updateCourse(long id, CourseDto courseDto) {
-        CourseEntity entity = courseRepository
+        CourseEntity course = courseRepository
                 .findById(id)
                 .orElseThrow(() -> new RecordIsNotExistException(CourseEntity.class, id));
 
-        entity.setTitle(courseDto.getTitle());
-        entity.setDescription(courseDto.getDescription());
-        entity.setPosition(courseDto.getPosition());
-
-        Set<TagEntity> existedTags = tagRepository.findAllByTagIn(courseDto.getTags());
-        Set<TagEntity> newTags = courseDto
-                .getTags()
-                .stream()
-                .map(TagEntity::new)
-                .collect(Collectors.toSet());
-        newTags.removeIf(newTag -> existedTags
-                .stream()
-                .map(TagEntity::getTag)
-                .anyMatch(existedTag -> existedTag.equalsIgnoreCase(newTag.getTag())));
-        tagRepository.saveAll(newTags);
-
-        Set<TagEntity> newTagCollection = new HashSet<>();
-        newTagCollection.addAll(existedTags);
-        newTagCollection.addAll(newTags);
-        entity.updateTags(newTagCollection);
-
-        courseRepository.save(entity);
+        course.setTitle(courseDto.getTitle());
+        course.setDescription(courseDto.getDescription());
+        course.setPosition(courseDto.getPosition());
+        tagService.updateTagCollection(course, courseDto.getTags());
+        courseRepository.save(course);
     }
 
     public void deleteCourse(long id) {
