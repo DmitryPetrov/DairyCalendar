@@ -6,9 +6,11 @@ import net.personal.dairycalendar.dto.CourseDto;
 import net.personal.dairycalendar.dto.mapper.CourseMapper;
 import net.personal.dairycalendar.dto.mapper.DayMapper;
 import net.personal.dairycalendar.exception.RecordIsNotExistException;
+import net.personal.dairycalendar.storage.entity.AppUserEntity;
 import net.personal.dairycalendar.storage.entity.CourseEntity;
 import net.personal.dairycalendar.storage.entity.DayEntity;
 import net.personal.dairycalendar.storage.entity.TagEntity;
+import net.personal.dairycalendar.storage.repository.AppUserRepository;
 import net.personal.dairycalendar.storage.repository.CourseRepository;
 import net.personal.dairycalendar.storage.repository.DayRepository;
 import net.personal.dairycalendar.storage.repository.TagRepository;
@@ -32,6 +34,7 @@ public class CourseService {
     private final CourseRepository courseRepository;
     private final DayRepository dayRepository;
     private final TagRepository tagRepository;
+    private final AppUserRepository appUserRepository;
     private final CourseMapper courseMapper;
     private final DayMapper dayMapper;
     private final AuthenticationService authenticationService;
@@ -84,6 +87,11 @@ public class CourseService {
                 .anyMatch(existedTag -> existedTag.equalsIgnoreCase(newTag.getTag())));
         course.addTags(existedTags);
         course.addTags(newTags);
+        tagRepository.saveAll(newTags);
+        long currentUserId = authenticationService.getCurrentUser().getId();
+        course.setUser(appUserRepository
+                               .findById(currentUserId)
+                               .orElseThrow(() -> new RecordIsNotExistException(AppUserEntity.class, currentUserId)));
         return courseRepository
                 .save(course)
                 .getId();
@@ -116,6 +124,7 @@ public class CourseService {
                 .stream()
                 .map(TagEntity::getTag)
                 .anyMatch(existedTag -> existedTag.equalsIgnoreCase(newTag.getTag())));
+        tagRepository.saveAll(newTags);
 
         Set<TagEntity> newTagCollection = new HashSet<>();
         newTagCollection.addAll(existedTags);

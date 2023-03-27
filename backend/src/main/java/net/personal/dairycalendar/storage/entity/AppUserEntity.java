@@ -9,6 +9,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import net.personal.dairycalendar.service.AppUser;
 import org.springframework.security.core.GrantedAuthority;
@@ -19,6 +20,7 @@ import java.util.Set;
 @Setter
 @Entity
 @Table(name = "app-user")
+@NoArgsConstructor
 public class AppUserEntity extends BaseEntity {
 
     @Column(name = "username", unique = true, length = 255)
@@ -33,6 +35,12 @@ public class AppUserEntity extends BaseEntity {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "role_id")
     private RoleEntity role;
+
+    public AppUserEntity(String username, String password, RoleEntity role) {
+        this.username = username;
+        this.password = password;
+        this.role = role;
+    }
 
     public AppUser toUser() {
         boolean enabled = true;

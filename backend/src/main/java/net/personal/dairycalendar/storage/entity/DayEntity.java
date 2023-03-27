@@ -6,7 +6,9 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
@@ -15,6 +17,8 @@ import java.time.LocalDate;
 @Setter
 @Entity
 @Table(name = "course-step")
+@AllArgsConstructor
+@NoArgsConstructor
 public class DayEntity extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.EAGER)

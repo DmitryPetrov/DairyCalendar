@@ -11,6 +11,7 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.Collection;
@@ -24,6 +25,7 @@ import java.util.stream.Collectors;
 @Entity
 @Table(name = "course",
         uniqueConstraints = @UniqueConstraint(columnNames = {"app-user_id", "title"}))
+@NoArgsConstructor
 public class CourseEntity extends BaseEntity{
 
     @Column(name = "title", length = 255)
@@ -34,7 +36,7 @@ public class CourseEntity extends BaseEntity{
     private int position;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name="app-user_id")
+    @JoinColumn(name="app-user_id", nullable = false)
     private AppUserEntity user;
 
     @OneToMany(mappedBy="course", fetch = FetchType.LAZY, orphanRemoval = true)
@@ -43,6 +45,20 @@ public class CourseEntity extends BaseEntity{
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @JoinColumn(name = "tag-collection_id", unique = true)
     private TagCollectionEntity tagCollection = new TagCollectionEntity();
+
+    public CourseEntity(
+            String title,
+            String description,
+            int position,
+            AppUserEntity user,
+            Collection<TagEntity> tags
+    ) {
+        this.title = title;
+        this.description = description;
+        this.position = position;
+        this.user = user;
+        this.addTags(tags);
+    }
 
     public CourseEntity addTags(Collection<TagEntity> tags) {
         if (this.getTagCollection() == null) {

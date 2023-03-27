@@ -1,6 +1,5 @@
 package net.personal.dairycalendar.storage.entity;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
@@ -20,7 +19,7 @@ import java.util.Set;
 @Table(name = "tag-collection")
 public class TagCollectionEntity extends BaseEntity {
 
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH}, fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "tag-collection_tag",
             joinColumns = @JoinColumn(name = "tag-collection_id"),
