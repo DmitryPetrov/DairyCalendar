@@ -166,7 +166,7 @@ class CourseController_IntegrationTest extends AbstractTest {
         assertFalse(dayRepository.findAll(daysByCourse).isEmpty(), "Before delete course has days");
 
         MvcResult result = mockMvc
-                .perform(delete(CourseController.URL_UPDATE_COURSE, course.getId()))
+                .perform(delete(CourseController.URL_DELETE_COURSE, course.getId()))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andReturn();

@@ -4,15 +4,18 @@ import net.personal.dairycalendar.exception.RecordIsNotExistException;
 import net.personal.dairycalendar.storage.entity.AppUserEntity;
 import net.personal.dairycalendar.storage.entity.CourseEntity;
 import net.personal.dairycalendar.storage.entity.DayEntity;
+import net.personal.dairycalendar.storage.entity.TaskEntity;
 import net.personal.dairycalendar.storage.repository.AppUserRepository;
 import net.personal.dairycalendar.storage.repository.CourseRepository;
 import net.personal.dairycalendar.storage.repository.DayRepository;
 import net.personal.dairycalendar.storage.repository.TagRepository;
+import net.personal.dairycalendar.storage.repository.TaskRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Set;
 
 @SpringBootTest
@@ -26,6 +29,8 @@ public class AbstractTest {
     private CourseRepository courseRepository;
     @Autowired
     private DayRepository dayRepository;
+    @Autowired
+    private TaskRepository taskRepository;
 
     protected final static String USER_1_USERNAME = "user_1";
     protected final static String TAG_1_TITLE = "tag_1";
@@ -63,5 +68,19 @@ public class AbstractTest {
     }
 
 
+    public TaskEntity saveTask(String username, Set<String> tags, boolean done, LocalDateTime finishedAt,
+                               TaskEntity parent) {
+        TaskEntity entity = new TaskEntity();
+        entity.setTitle("title");
+        entity.setDescription("description");
+        entity.setPosition(1);
+        entity.setPriority(1);
+        entity.setDone(done);
+        entity.setFinishedAt(finishedAt);
+        entity.setUser(loadUser(username));
+        entity.setParent(parent);
+        entity.addTags(tagRepository.findAllByTagIn(tags));
+        return taskRepository.save(entity);
+    }
 
 }
