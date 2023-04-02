@@ -52,7 +52,7 @@ public class TaskController {
 
     public static final String URL_GET_TASK = BASE_URL + "/{id}";
     @GetMapping(URL_GET_TASK)
-    public ResponseEntity<TaskDto> getCourse(@PathVariable long id) {
+    public ResponseEntity<TaskDto> get(@PathVariable long id) {
         TaskDto task = service.getTask(id);
         return ResponseEntity
                 .status(HttpStatus.OK)
@@ -62,8 +62,18 @@ public class TaskController {
 
     public static final String URL_UPDATE_TASK = BASE_URL + "/{id}";
     @PutMapping(URL_UPDATE_TASK)
-    public ResponseEntity<IdDto> updateCourse(@PathVariable long id, @RequestBody TaskDto dto) {
+    public ResponseEntity<IdDto> update(@PathVariable long id, @RequestBody TaskDto dto) {
         service.updateTask(id, dto);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(new IdDto(id));
+    }
+
+    public static final String URL_CLOSE_TASK = BASE_URL + "/{id}/close";
+    @PutMapping(URL_CLOSE_TASK)
+    public ResponseEntity<IdDto> close(@PathVariable long id) {
+        service.closeTask(id);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -72,7 +82,7 @@ public class TaskController {
 
     public static final String URL_DELETE_TASK = BASE_URL + "/{id}";
     @DeleteMapping(URL_DELETE_TASK)
-    public ResponseEntity<IdDto> deleteCourse(@PathVariable long id) {
+    public ResponseEntity<IdDto> delete(@PathVariable long id) {
         service.deleteTask(id);
         return ResponseEntity
                 .status(HttpStatus.OK)

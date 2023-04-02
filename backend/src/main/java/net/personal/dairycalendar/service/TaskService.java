@@ -14,6 +14,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -56,6 +57,9 @@ public class TaskService {
                     .orElseThrow(() -> new RecordIsNotExistException(TaskEntity.class, dto.getParentId()));
             taskEntity.setParent(parent);
         }
+        if (dto.isDone()) {
+            taskEntity.setFinishedAt(LocalDateTime.now());
+        }
         taskEntity.setUser(appUserRepository
                                .findById(currentUserId)
                                .orElseThrow(() -> new RecordIsNotExistException(AppUserEntity.class, currentUserId)));
@@ -67,6 +71,9 @@ public class TaskService {
         TaskEntity entity = taskRepository
                 .findById(id)
                 .orElseThrow(() -> new RecordIsNotExistException(TaskEntity.class, id));
+        if (dto.isDone()) {
+            entity.setFinishedAt(LocalDateTime.now());
+        }
         taskMapper.updateEntity(dto, entity);
         tagService.updateTagCollection(entity, dto.getTags());
         taskRepository.save(entity);
@@ -74,5 +81,14 @@ public class TaskService {
 
     public void deleteTask(long id) {
         taskRepository.deleteById(id);
+    }
+
+    @Transactional
+    public void closeTask(long id) {
+        TaskEntity entity = taskRepository
+                .findById(id)
+                .orElseThrow(() -> new RecordIsNotExistException(TaskEntity.class, id));
+        entity.setFinishedAt(LocalDateTime.now());
+        taskRepository.save(entity);
     }
 }

@@ -27,6 +27,7 @@ import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -84,7 +85,6 @@ class TaskController_IntegrationTest extends AbstractTest {
         assertEquals(payload.getPosition(), entity.getPosition(), "Task position wrong");
         assertEquals(payload.getPriority(), entity.getPriority(), "Task priority wrong");
         assertEquals(payload.isDone(), entity.isDone(), "Task done flag wrong");
-        assertEquals(payload.getFinishedAt(), entity.getFinishedAt(), "Task finish timestamp wrong");
         assertNull(entity.getParent(), "Task parent wrong");
         assertEquals(payload.getTags(), entity.getTags(), "Task tags wrong");
         for (String tag : payload.getTags()) {
@@ -129,7 +129,6 @@ class TaskController_IntegrationTest extends AbstractTest {
         assertEquals(payload.getPosition(), entity.getPosition(), "Task position wrong");
         assertEquals(payload.getPriority(), entity.getPriority(), "Task priority wrong");
         assertEquals(payload.isDone(), entity.isDone(), "Task done flag wrong");
-        assertEquals(payload.getFinishedAt(), entity.getFinishedAt(), "Task finish timestamp wrong");
         assertEquals(task.getId(), entity.getParent().getId(),"Task parent wrong");
         assertEquals(payload.getTags(), entity.getTags(), "Task tags wrong");
         for (String tag : payload.getTags()) {
@@ -186,6 +185,27 @@ class TaskController_IntegrationTest extends AbstractTest {
         for (String tag : tagsBeforeUpdate) {
             assertEquals(1, tagRepository.findAllByTagIn(Set.of(tag)).size(), "Tag [" + tag + "] deleted");
         }
+    }
+
+    @Test
+    @WithUserDetails(USER_1_USERNAME)
+    @DisplayName("Close task")
+    void closeTask() throws Exception {
+        TaskEntity task = saveTask(USER_1_USERNAME, Set.of(TAG_1_TITLE, TAG_2_TITLE), false, null, null);
+
+        MvcResult result = mockMvc
+                .perform(put(TaskController.URL_CLOSE_TASK, task.getId()))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andReturn();
+        long idOfUpdatedTask = objectMapper.readValue(result.getResponse().getContentAsString(), IdDto.class).getId();
+        assertEquals(task.getId(), idOfUpdatedTask);
+
+        TaskEntity entity = taskRepository
+                .findById(task.getId())
+                .orElseThrow(() -> new RecordIsNotExistException(CourseEntity.class, task.getId()));
+
+        assertNotNull(entity.getFinishedAt(), "Task not finished");
     }
 
     @Test
