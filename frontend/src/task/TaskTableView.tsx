@@ -21,10 +21,10 @@ export default function TaskTableView() {
 
     const [tasks, setTasks] = useState<Task[]>([])
 
+    const [reload, setReload] = useState<boolean>(false)
     React.useEffect(() => {
         getTasks({}, readPayload)
-    }, []);
-
+    }, [reload]);
     function readPayload(tasks: Task[]) {
         setTasks(tasks);
     }
@@ -35,6 +35,7 @@ export default function TaskTableView() {
         } else {
             putTask(task);
         }
+        handleClose()
     }
 
     const [task, setTask] = useState<Task | undefined>(undefined);
@@ -60,7 +61,7 @@ export default function TaskTableView() {
     };
     const handleClose = () => {
         setOpen(false);
-        getTasks({}, readPayload)
+        setReload(!reload);
     };
 
 

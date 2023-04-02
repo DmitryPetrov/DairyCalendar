@@ -10,9 +10,10 @@ import CourseTableRow from "./CourseTableRow";
 interface TableProps {
     courses: Course[];
     dates: DateTime[]
+    reloadTable: () => void
 }
 
-export default function CourseTableView({courses, dates}: TableProps) {
+export default function CourseTableView({courses, dates, reloadTable}: TableProps) {
 
     const [date, setDate] = useState<DateTime>(DateTime.now())
     const [open, setOpen] = React.useState(false);
@@ -24,6 +25,7 @@ export default function CourseTableView({courses, dates}: TableProps) {
 
     const handleClose = () => {
         setOpen(false);
+        reloadTable();
     };
 
     return (

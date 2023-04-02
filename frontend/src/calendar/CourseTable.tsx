@@ -8,15 +8,20 @@ import CourseTableView from "./CourseTableView";
 export default function CourseTable() {
     const [courses, setCourses] = useState<Course[]>([])
     const [dates, setDates] = useState<DateTime[]>([])
+    const [reload, setReload] = useState<boolean>(false)
 
     React.useEffect(() => {
         getCourses(new GetCoursesRequestParams(DateTime.now().minus({days: 28}), DateTime.now()), readPayload)
-    }, []);
+    }, [reload]);
 
     function readPayload(courses: Course[], fromDate: DateTime, toDate: DateTime) {
         setCourses(courses);
         setDates(getDateList(fromDate, toDate))
     }
+
+    const reloadTable = () => {
+        setReload(!reload);
+    };
 
     function getDateList(fromDate: DateTime, toDate : DateTime) {
         if ((fromDate == undefined) || (toDate == undefined)) {
@@ -31,5 +36,5 @@ export default function CourseTable() {
         return result
     }
 
-    return <CourseTableView courses={courses} dates={dates}/>
+    return <CourseTableView courses={courses} dates={dates} reloadTable={reloadTable}/>
 }
