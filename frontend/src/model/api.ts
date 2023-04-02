@@ -51,6 +51,19 @@ export const postCourse = (course: Course) => {
         .catch((error: TypeError) => {handleError(error)});
 }
 
+export const isLoggedIn = (ifLoggedIn: () => void, ifNotLoggedIn: () => void, ) => {
+    client
+        .get('/login/check')
+        .then(response => {
+            console.log(response)
+            ifLoggedIn();
+        })
+        .catch((error: TypeError) => {
+            ifNotLoggedIn()
+            //handleError(error)
+        });
+}
+
 export const postLogin = (credentials: {username: string, password: string}, onSuccessLogin: () => void) => {
     client
         .post('/login/process', null,{params:credentials})

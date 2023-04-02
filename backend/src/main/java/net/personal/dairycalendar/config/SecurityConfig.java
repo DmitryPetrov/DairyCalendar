@@ -48,6 +48,7 @@ public class SecurityConfig {
                     })
                 .and()
                 .logout()
+                    .logoutUrl("/api/logout").permitAll()
                     .invalidateHttpSession(true)
                     .clearAuthentication(true)
                     .logoutSuccessHandler((req, resp, auth) -> System.out.println("===logout successful==="))
