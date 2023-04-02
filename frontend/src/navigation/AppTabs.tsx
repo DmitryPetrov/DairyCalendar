@@ -8,6 +8,7 @@ import CourseForm from "../forms/CourseForm";
 import {Course} from "../model/Course";
 import {postCourse} from "../model/api";
 import LogoutForm from "../forms/Logout";
+import TaskTableView from "../task/TaskTableView";
 
 interface AppTabsProps {
     onSuccessLogout: () => void;
@@ -30,7 +31,8 @@ export default function AppTabs({onSuccessLogout}: AppTabsProps) {
                 <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
                     <Tab label="Calendar" id="0" />
                     <Tab label="Add Course" id="1" />
-                    <Tab label="Logout" id="2" />
+                    <Tab label="Tasks" id="2" />
+                    <Tab label="Logout" id="3" />
                 </Tabs>
             </Box>
             <TabPanel value={value} index={0}>
@@ -40,6 +42,9 @@ export default function AppTabs({onSuccessLogout}: AppTabsProps) {
                 <CourseForm onSave={saveNewCourse} onCancel={() => {}}/>
             </TabPanel>
             <TabPanel value={value} index={2}>
+                <TaskTableView/>
+            </TabPanel>
+            <TabPanel value={value} index={3}>
                 <LogoutForm onSuccessLogout={onSuccessLogout}/>
             </TabPanel>
         </Box>

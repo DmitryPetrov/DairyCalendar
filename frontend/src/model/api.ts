@@ -3,6 +3,7 @@ import {Course} from "./Course";
 import {Day} from "./Day";
 import {GetCoursesRequestParams} from "./GetCoursesRequestParams";
 import {DateTime} from "luxon";
+import {Task} from "./Task";
 
 
 const URL = process.env.REACT_APP_API_ENDPOINT;
@@ -51,6 +52,44 @@ export const postCourse = (course: Course) => {
         .catch((error: TypeError) => {handleError(error)});
 }
 
+export const postTask = (task: Task) => {
+    client
+        .post(`/task`, task.toPostPayload())
+        .catch((error: TypeError) => {handleError(error)});
+}
+
+export const putTask = (task: Task) => {
+    client
+        .put(`/task/` + task.id, task.toPostPayload())
+        .catch((error: TypeError) => {handleError(error)});
+}
+
+export const closeTask = (id: number) => {
+    client
+        .put(`/task/` + id + '/close')
+        .catch((error: TypeError) => {handleError(error)});
+}
+
+export const deleteTask = (id: number) => {
+    client
+        .delete(`/task/` + id)
+        .catch((error: TypeError) => {handleError(error)});
+}
+
+export const getTasks = (
+    params: object,
+    readPayload: (tasks: Task[]) => void
+) => {
+    client
+        .get('/task', {params: params})
+        .then(response => {
+            readPayload(
+                response.data.map((item: any) => new Task(item))
+            )
+        })
+        .catch((error: TypeError) => {handleError(error)});
+}
+
 export const isLoggedIn = (ifLoggedIn: () => void, ifNotLoggedIn: () => void, ) => {
     client
         .get('/login/check')
@@ -60,7 +99,6 @@ export const isLoggedIn = (ifLoggedIn: () => void, ifNotLoggedIn: () => void, ) 
         })
         .catch((error: TypeError) => {
             ifNotLoggedIn()
-            //handleError(error)
         });
 }
 
@@ -85,7 +123,7 @@ export const postLogout = (onSuccessLogout: () => void) => {
 }
 
 function handleError(error: TypeError) {
-    console.log('log client error ' + error);
+    console.log(error);
     throw new Error(
         'There was an error retrieving the projects. Please try again.'
     );
