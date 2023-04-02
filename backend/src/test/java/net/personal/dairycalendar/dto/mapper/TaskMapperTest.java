@@ -57,7 +57,7 @@ class TaskMapperTest {
         assertEquals(dto.getPosition(), entity.getPosition());
         assertEquals(dto.getPriority(), entity.getPriority());
         assertEquals(dto.isDone(), entity.isDone());
-        assertEquals(dto.getFinishedAt(), entity.getFinishedAt());
+        assertNull(entity.getFinishedAt());
         assertNull(entity.getUser());
         assertNull(entity.getParent());
         assertTrue(entity.getTagCollection().getTags().isEmpty());

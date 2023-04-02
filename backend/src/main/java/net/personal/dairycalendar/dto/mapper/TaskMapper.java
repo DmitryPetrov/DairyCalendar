@@ -31,6 +31,7 @@ public interface TaskMapper {
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "tagCollection", ignore = true)
+    @Mapping(target = "finishedAt", ignore = true)
     void updateEntity(TaskDto dto, @MappingTarget TaskEntity entity);
 
 }

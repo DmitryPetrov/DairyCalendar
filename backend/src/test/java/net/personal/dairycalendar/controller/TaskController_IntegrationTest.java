@@ -148,7 +148,7 @@ class TaskController_IntegrationTest extends AbstractTest {
         payload.setPosition(111);
         payload.setPriority(111);
         payload.setDone(true);
-        payload.setFinishedAt(LocalDateTime.of(2023, 3, 28, 11, 36, 13));
+        payload.setFinishedAt(null);
         payload.setParentId(null);
         payload.setTags(Set.of(TAG_2_TITLE, TAG_3_TITLE));
         Set<String> tagsBeforeUpdate = task.getTags();
@@ -175,7 +175,7 @@ class TaskController_IntegrationTest extends AbstractTest {
         assertEquals(payload.getPosition(), entity.getPosition(), "Task position wrong");
         assertEquals(payload.getPriority(), entity.getPriority(), "Task priority wrong");
         assertEquals(payload.isDone(), entity.isDone(), "Task done flag wrong");
-        assertEquals(payload.getFinishedAt(), entity.getFinishedAt(), "Task finish timestamp wrong");
+        assertNotNull(entity.getFinishedAt(), "Task not finished");
         assertNull(entity.getParent(), "Task parent wrong");
         assertEquals(payload.getTags(), entity.getTags(), "Task tags wrong");
         for (String tag : payload.getTags()) {
