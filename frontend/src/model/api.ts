@@ -83,9 +83,7 @@ export const getTasks = (
     client
         .get('/task', {params: params})
         .then(response => {
-            readPayload(
-                response.data.map((item: any) => new Task(item))
-            )
+            readPayload(response.data.map((item: any) => new Task(item)))
         })
         .catch((error: TypeError) => {handleError(error)});
 }
@@ -118,6 +116,15 @@ export const postLogout = (onSuccessLogout: () => void) => {
         .then(response => {
             console.log(JSON.stringify(response));
             onSuccessLogout();
+        })
+        .catch((error: TypeError) => {handleError(error)});
+}
+
+export const getTags = (readPayload: (tags: string[]) => void) => {
+    client
+        .get('/tag')
+        .then(response => {
+            readPayload(response.data)
         })
         .catch((error: TypeError) => {handleError(error)});
 }

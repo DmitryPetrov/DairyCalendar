@@ -1,5 +1,6 @@
 import React, {SyntheticEvent, useState} from "react";
 import {
+    Autocomplete,
     Button,
     Dialog,
     DialogActions,
@@ -13,6 +14,7 @@ import {
     Typography
 } from "@mui/material";
 import {Task} from "../model/Task";
+import {getTags} from "../model/api";
 
 interface TaskFormProps {
     task: Task | undefined;
@@ -33,8 +35,10 @@ export default function TaskForm({task, parentTaskId, open, closeTask, onSave, o
         setDone(task?.done ?? false);
         setPriority(task?.priority ?? 0);
         setReadonly(task?.finishedAt != null);
+        getTags(setTagsList)
     }, [task]);
 
+    const [tagsList, setTagsList] = useState<string[]>([]);
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
     const [tags, setTags] = useState<string[]>([]);
@@ -106,13 +110,22 @@ export default function TaskForm({task, parentTaskId, open, closeTask, onSave, o
                             value={task?.finishedAt?.toISODate?.() ?? undefined}
                             onChange={() => {}}
                             disabled/>
-                        <TextField
-                            id="outlined-multiline-flexible"
-                            label="Tags"
-                            multiline
-                            maxRows={4}
-                            value={tags.join(" ")}
-                            onChange={(e) => setTags(e.target.value.split(" "))}/>
+                        <Autocomplete
+                            multiple
+                            id="tags-outlined"
+                            options={tagsList}
+                            getOptionLabel={(option) => option}
+                            defaultValue={task?.tags}
+                            freeSolo
+                            filterSelectedOptions
+                            renderInput={(params) => (
+                                <TextField
+                                    {...params}
+                                    label="Tags"
+                                    placeholder="tag"
+                                />
+                            )}
+                            onChange={(e, value) => {setTags(value)}}/>
                     </Stack>
                     <TextField
                         sx={{width: '70%'}}
