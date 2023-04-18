@@ -7,25 +7,29 @@ import {
     Fab,
     Paper,
     Rating,
+    Stack,
     Table,
     TableBody,
     TableCell,
     TableContainer,
     TableHead,
-    TableRow
+    TableRow,
+    Typography
 } from "@mui/material";
 import TaskForm from "./TaskForm";
 import DoneIcon from '@mui/icons-material/Done';
 import EditIcon from '@mui/icons-material/Edit';
 import AddIcon from '@mui/icons-material/Add';
+import TaskFilters from "./TaskFilters";
+import Box from "@mui/material/Box";
 
 export default function TaskTableView() {
 
     const [tasks, setTasks] = useState<Task[]>([])
-
+    const [filters, setFilters] = useState<{}>({})
     const [reload, setReload] = useState<boolean>(false)
     React.useEffect(() => {
-        getTasks({}, readPayload)
+        getTasks(filters, readPayload)
     }, [reload]);
     function readPayload(tasks: Task[]) {
         setTasks(tasks);
@@ -66,63 +70,75 @@ export default function TaskTableView() {
         setReload(!reload);
     };
 
+    const onApplyFilters = (filters: {}) => {
+        setFilters(filters);
+        getTasks(filters, readPayload)
+    }
 
     return (
-        <TableContainer component={Paper}>
+        <div>
             <Fab color="primary" aria-label="add" onClick={createTask} className="add_element_button">
                 <AddIcon />
             </Fab>
-            <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                <TableHead>
-                    <TableRow>
-                        <TableCell>Title</TableCell>
-                        <TableCell align="center">Priority</TableCell>
-                        <TableCell align="center">Done</TableCell>
-                        <TableCell align="center">Finished at</TableCell>
-                        <TableCell align="center">Tags</TableCell>
-                        <TableCell align="center">Edit</TableCell>
-                        <TableCell align="center">Show parent</TableCell>
-                        <TableCell align="center">Add child</TableCell>
-                    </TableRow>
-                </TableHead>
-                <TableBody>
-                    {tasks.map((task) => (
-                        <TableRow
-                            key={task.id}
-                            sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                        >
-                            <TableCell component="th" scope="row">
-                                {task.title}
-                            </TableCell>
-                            <TableCell align="center">
-                                <Rating value={task.priority} readOnly/>
-                            </TableCell>
-                            <TableCell align="center">{task.done ? <DoneIcon /> : ''}</TableCell>
-                            <TableCell align="center">{task.finishedAt?.toISODate?.()}</TableCell>
-                            <TableCell align="center">{task.tags.map(tag => <Chip key={tag} label={tag}/>)}</TableCell>
-                            <TableCell align="center">
-                                <Button onClick={() => openTask(task)}><EditIcon /></Button>
-                            </TableCell>
-                            <TableCell align="center">
-                                <Button>{task.parentId}</Button>
-                            </TableCell>
-                            <TableCell align="center">
-                                <Button onClick={() => addChild(task)}>Add child</Button>
-                            </TableCell>
+            <Box sx={{mb:'16px'}}>
+                <TaskFilters onApply={onApplyFilters} />
+            </Box>
+            <TableContainer component={Paper} >
+                <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                    <TableHead>
+                        <TableRow>
+                            <TableCell><Typography variant="h6">Title</Typography></TableCell>
+                            <TableCell align="center"><Typography variant="h6">Priority</Typography></TableCell>
+                            <TableCell align="center"><Typography variant="h6">Done</Typography></TableCell>
+                            <TableCell align="center"><Typography variant="h6">Finished at</Typography></TableCell>
+                            <TableCell align="center"><Typography variant="h6">Tags</Typography></TableCell>
+                            <TableCell align="center"><Typography variant="h6">Edit</Typography></TableCell>
+                            <TableCell align="center"><Typography variant="h6">Show parent</Typography></TableCell>
+                            <TableCell align="center"><Typography variant="h6">Add child</Typography></TableCell>
                         </TableRow>
-                    ))}
-                </TableBody>
-            </Table>
-            <TaskForm
-                open={open}
-                task={task}
-                parentTaskId={parentTaskId}
-                closeTask={closeTask}
-                onSave={saveTask}
-                onBack={handleClose}
-                onDelete={deleteTask}
-            />
-
-        </TableContainer>
+                    </TableHead>
+                    <TableBody>
+                        {tasks.map((task) => (
+                            <TableRow
+                                key={task.id}
+                                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                            >
+                                <TableCell component="th" scope="row">
+                                    {task.title}
+                                </TableCell>
+                                <TableCell align="center">
+                                    <Rating value={task.priority} readOnly/>
+                                </TableCell>
+                                <TableCell align="center">{task.done ? <DoneIcon /> : ''}</TableCell>
+                                <TableCell align="center">{task.finishedAt?.toISODate?.()}</TableCell>
+                                <TableCell align="center">
+                                    <Stack spacing={1} direction="row" >
+                                        {task.tags.map(tag => <Chip key={tag} label={tag}/>)}
+                                    </Stack>
+                                </TableCell>
+                                <TableCell align="center">
+                                    <Button onClick={() => openTask(task)}><EditIcon /></Button>
+                                </TableCell>
+                                <TableCell align="center">
+                                    <Button>{task.parentId}</Button>
+                                </TableCell>
+                                <TableCell align="center">
+                                    <Button onClick={() => addChild(task)}>Add child</Button>
+                                </TableCell>
+                            </TableRow>
+                        ))}
+                    </TableBody>
+                </Table>
+                <TaskForm
+                    open={open}
+                    task={task}
+                    parentTaskId={parentTaskId}
+                    closeTask={closeTask}
+                    onSave={saveTask}
+                    onBack={handleClose}
+                    onDelete={deleteTask}
+                />
+            </TableContainer>
+        </div>
     );
 }

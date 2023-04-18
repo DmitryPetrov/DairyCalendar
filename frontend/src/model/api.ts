@@ -4,6 +4,7 @@ import {Day} from "./Day";
 import {GetCoursesRequestParams} from "./GetCoursesRequestParams";
 import {DateTime} from "luxon";
 import {Task} from "./Task";
+import * as Qs from "qs";
 
 
 const URL = process.env.REACT_APP_API_ENDPOINT;
@@ -81,7 +82,10 @@ export const getTasks = (
     readPayload: (tasks: Task[]) => void
 ) => {
     client
-        .get('/task', {params: params})
+        .get('/task', {
+            params: params,
+            paramsSerializer: { serialize: (params: any) => Qs.stringify(params, {arrayFormat: 'comma'}) }
+        })
         .then(response => {
             readPayload(response.data.map((item: any) => new Task(item)))
         })
