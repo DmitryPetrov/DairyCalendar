@@ -9,6 +9,7 @@ import net.personal.dairycalendar.storage.entity.AppUserEntity;
 import net.personal.dairycalendar.storage.entity.TaskEntity;
 import net.personal.dairycalendar.storage.repository.AppUserRepository;
 import net.personal.dairycalendar.storage.repository.TaskRepository;
+import net.personal.dairycalendar.storage.specification.EntityWithTagsSpecifications;
 import net.personal.dairycalendar.storage.specification.TaskSpecifications;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -43,8 +44,8 @@ public class TaskService {
                 .and(TaskSpecifications.byTitle(title))
                 .and(TaskSpecifications.isDone(done))
                 .and(TaskSpecifications.isClosed(closed))
-                .and(TaskSpecifications.hasTags(tags))
-                .and(TaskSpecifications.hasNoTags(noTags));
+                .and(EntityWithTagsSpecifications.hasTags(tags, TaskEntity.class))
+                .and(EntityWithTagsSpecifications.hasNoTags(noTags, TaskEntity.class));
         return taskRepository
                 .findAll(specification)
                 .stream()
