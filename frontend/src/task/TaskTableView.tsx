@@ -112,7 +112,7 @@ export default function TaskTableView() {
                                 <TableCell align="center">{task.done ? <DoneIcon /> : ''}</TableCell>
                                 <TableCell align="center">{task.finishedAt?.toISODate?.()}</TableCell>
                                 <TableCell align="center">
-                                    <Stack spacing={1} direction="row" >
+                                    <Stack spacing={1} direction="row" justifyContent="center">
                                         {task.tags.map(tag => <Chip key={tag} label={tag}/>)}
                                     </Stack>
                                 </TableCell>
