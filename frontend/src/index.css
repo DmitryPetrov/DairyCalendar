@@ -25,3 +25,9 @@
 .login_page{
     margin-top: 8%;
 }
+
+.add_element_button {
+    position: absolute;
+    bottom: 80px;
+    right: 80px;
+}

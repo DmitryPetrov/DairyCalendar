@@ -4,6 +4,7 @@ import {closeTask, deleteTask, getTasks, postTask, putTask} from "../model/api";
 import {
     Button,
     Chip,
+    Fab,
     Paper,
     Rating,
     Table,
@@ -16,6 +17,7 @@ import {
 import TaskForm from "./TaskForm";
 import DoneIcon from '@mui/icons-material/Done';
 import EditIcon from '@mui/icons-material/Edit';
+import AddIcon from '@mui/icons-material/Add';
 
 export default function TaskTableView() {
 
@@ -67,8 +69,9 @@ export default function TaskTableView() {
 
     return (
         <TableContainer component={Paper}>
-            <Button variant="contained" onClick={createTask}>Create task</Button>
-
+            <Fab color="primary" aria-label="add" onClick={createTask} className="add_element_button">
+                <AddIcon />
+            </Fab>
             <Table sx={{ minWidth: 650 }} aria-label="simple table">
                 <TableHead>
                     <TableRow>
