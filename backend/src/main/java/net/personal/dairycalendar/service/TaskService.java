@@ -31,9 +31,22 @@ public class TaskService {
     private final AppUserRepository appUserRepository;
 
     @Transactional(readOnly = true)
-    public List<TaskDto> getTasksForCurrentUser(Set<String> tags) {
+    public List<TaskDto> getTasksForCurrentUser(
+            Set<String> tags,
+            Set<String> noTags,
+            Boolean done,
+            Boolean closed,
+            String title
+    ) {
+        Specification<TaskEntity> specification = Specification
+                .where(TaskSpecifications.byUser(authenticationService.getCurrentUser().getId()))
+                .and(TaskSpecifications.byTitle(title))
+                .and(TaskSpecifications.isDone(done))
+                .and(TaskSpecifications.isClosed(closed))
+                .and(TaskSpecifications.hasTags(tags))
+                .and(TaskSpecifications.hasNoTags(noTags));
         return taskRepository
-                .findAll(Specification.where(TaskSpecifications.byUser(authenticationService.getCurrentUser().getId())))
+                .findAll(specification)
                 .stream()
                 .map(taskMapper::toDto)
                 .collect(Collectors.toList());

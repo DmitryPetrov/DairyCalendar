@@ -29,11 +29,20 @@ public class TaskController {
 
     public static final String URL_GET_ALL_TASKS = BASE_URL;
     @GetMapping(URL_GET_ALL_TASKS)
-    public ResponseEntity<List<TaskDto>> getUsersTasks(@RequestParam(required = false) Set<String> tags) {
+    public ResponseEntity<List<TaskDto>> getUsersTasks(
+            @RequestParam(required = false) Set<String> tags,
+            @RequestParam(required = false) Set<String> noTags,
+            @RequestParam(required = false) Boolean done,
+            @RequestParam(required = false) Boolean closed,
+            @RequestParam(required = false) String title
+    ) {
         if (tags == null) {
             tags = Set.of();
         }
-        List<TaskDto> tasks = service.getTasksForCurrentUser(tags);
+        if (noTags == null) {
+            noTags = Set.of();
+        }
+        List<TaskDto> tasks = service.getTasksForCurrentUser(tags, noTags, done, closed, title);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .contentType(MediaType.APPLICATION_JSON)

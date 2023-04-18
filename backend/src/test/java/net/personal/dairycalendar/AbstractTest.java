@@ -36,6 +36,8 @@ public class AbstractTest {
     protected final static String TAG_1_TITLE = "tag_1";
     protected final static String TAG_2_TITLE = "tag_2";
     protected final static String TAG_3_TITLE = "tag_3";
+    protected final static String TAG_4_TITLE = "tag_4";
+    protected final static String TAG_5_TITLE = "tag_5";
 
     public AppUserEntity loadUser(String username) {
         return appUserRepository
@@ -67,11 +69,26 @@ public class AbstractTest {
         return dayRepository.save(dayEntity);
     }
 
+    public TaskEntity saveTask(
+            String username,
+            Set<String> tags,
+            boolean done,
+            LocalDateTime finishedAt,
+            TaskEntity parent
+    ) {
+        return saveTask("title", username, tags, done, finishedAt, parent);
+    }
 
-    public TaskEntity saveTask(String username, Set<String> tags, boolean done, LocalDateTime finishedAt,
-                               TaskEntity parent) {
+    public TaskEntity saveTask(
+            String title,
+            String username,
+            Set<String> tags,
+            boolean done,
+            LocalDateTime finishedAt,
+            TaskEntity parent
+    ) {
         TaskEntity entity = new TaskEntity();
-        entity.setTitle("title");
+        entity.setTitle(title);
         entity.setDescription("description");
         entity.setPosition(1);
         entity.setPriority(1);
