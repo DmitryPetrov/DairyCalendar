@@ -12,6 +12,11 @@ import java.util.Set;
 public class CourseDaySpecifications {
 
     public static Specification<DayEntity> inPeriod(LocalDate fromDate, LocalDate toDate) {
+        if (fromDate.isAfter(toDate)) {
+            LocalDate temp = fromDate;
+            fromDate = toDate;
+            toDate = temp;
+        }
         final LocalDate endDate = Optional.ofNullable(toDate).orElse(LocalDate.now());
         final LocalDate startDate = Optional.ofNullable(fromDate).orElse(endDate.minusDays(7));
         return (root, query, criteriaBuilder) -> criteriaBuilder
@@ -29,15 +34,4 @@ public class CourseDaySpecifications {
                 .in(root.get(DayEntity_.COURSE).get(CourseEntity_.ID))
                 .value(courseIdCollection);
     }
-
-/*    public static Specification<DayEntity> hasTags(Set<String> tags) {
-        return (root, query, criteriaBuilder) -> {
-            if (tags.isEmpty()) {
-                return null;
-            }
-            return criteriaBuilder
-                .in(root.get(DayEntity_.COURSE).get(CourseEntity_.TAGS).get(TagEntity_.TAG))
-                .value(tags);
-        };
-    }*/
 }

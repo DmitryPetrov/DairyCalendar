@@ -9,7 +9,7 @@ import java.util.Set;
 
 public class CourseSpecifications {
 
-    public static Specification<CourseEntity> fromUser(long userId) {
+    public static Specification<CourseEntity> byUser(long userId) {
         return (root, query, criteriaBuilder) -> criteriaBuilder
                 .equal(root.get(CourseEntity_.USER).get(AppUserEntity_.ID), userId);
     }
@@ -20,11 +20,14 @@ public class CourseSpecifications {
                 .value(usersIdCollection);
     }
 
-/*    public static Specification<CourseEntity> hasTags(Set<String> tags) {
+    public static Specification<CourseEntity> byId(Set<Long> coursesId) {
         return (root, query, criteriaBuilder) -> {
+            if (coursesId == null || coursesId.isEmpty()) {
+                return null;
+            }
             return criteriaBuilder
-                    .in(root.get(CourseEntity_.TAGS).get(TagEntity_.TAG))
-                    .value(tags);
+                    .in(root.get(CourseEntity_.ID))
+                    .value(coursesId);
         };
-    }*/
+    }
 }

@@ -29,12 +29,13 @@ public class CourseController {
     private final CourseService service;
     private static final String BASE_URL = "/api/course";
 
-    public static final String  URL_GET_ALL_COURSES = BASE_URL;
-    @GetMapping(URL_GET_ALL_COURSES)
+    public static final String URL_GET_COURSE_LIST = BASE_URL;
+    @GetMapping(URL_GET_COURSE_LIST)
     public ResponseEntity<CoursesDto> getUsersCourses(
             @RequestParam(required = false) LocalDate fromDate,
             @RequestParam(required = false) LocalDate toDate,
-            @RequestParam(required = false) Set<String> tags
+            @RequestParam(required = false) Set<String> tags,
+            @RequestParam(required = false) Set<Long> courses
     ) {
         if (toDate == null) {
             toDate = LocalDate.now();
@@ -45,7 +46,10 @@ public class CourseController {
         if (tags == null) {
             tags = Set.of();
         }
-        List<CourseDto> result = service.getCoursesForCurrentUser(fromDate, toDate, tags);
+        if (courses == null) {
+            courses = Set.of();
+        }
+        List<CourseDto> result = service.getCoursesForCurrentUser(fromDate, toDate, tags, courses);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .contentType(MediaType.APPLICATION_JSON)

@@ -17,6 +17,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Set;
+import java.util.concurrent.ThreadLocalRandom;
 
 @SpringBootTest
 public class AbstractTest {
@@ -38,6 +39,10 @@ public class AbstractTest {
     protected final static String TAG_3_TITLE = "tag_3";
     protected final static String TAG_4_TITLE = "tag_4";
     protected final static String TAG_5_TITLE = "tag_5";
+
+    public int getRandom() {
+        return ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE);
+    }
 
     public AppUserEntity loadUser(String username) {
         return appUserRepository

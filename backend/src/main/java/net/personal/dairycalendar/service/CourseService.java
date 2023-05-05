@@ -14,6 +14,7 @@ import net.personal.dairycalendar.storage.repository.CourseRepository;
 import net.personal.dairycalendar.storage.repository.DayRepository;
 import net.personal.dairycalendar.storage.specification.CourseDaySpecifications;
 import net.personal.dairycalendar.storage.specification.CourseSpecifications;
+import net.personal.dairycalendar.storage.specification.EntityWithTagsSpecifications;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,20 +38,24 @@ public class CourseService {
     private final TagService tagService;
 
     @Transactional(readOnly = true)
-    public List<CourseDto> getCoursesForCurrentUser(LocalDate fromDate, LocalDate toDate, Set<String> tags) {
-        long currentUserId = authenticationService
-                .getCurrentUser()
-                .getId();
-        List<CourseEntity> courses = courseRepository
-                .findAll(Specification.where(CourseSpecifications.fromUser(currentUserId)));
-
+    public List<CourseDto> getCoursesForCurrentUser(
+            LocalDate fromDate,
+            LocalDate toDate,
+            Set<String> tags,
+            Set<Long> coursesId
+    ) {
+        Specification<CourseEntity> specification = Specification
+                .where(CourseSpecifications.byUser(authenticationService.getCurrentUser().getId()))
+                .and(CourseSpecifications.byId(coursesId))
+                .and(EntityWithTagsSpecifications.hasTags(tags, CourseEntity.class));
+        List<CourseEntity> courses = courseRepository.findAll(specification);
         Set<Long> coursesIdList = courses
                 .stream()
                 .map(CourseEntity::getId)
                 .collect(Collectors.toSet());
         Specification<DayEntity> daysByCoursesInPeriod = Specification
                 .where(CourseDaySpecifications.inCourse(coursesIdList))
-                .and(CourseDaySpecifications.inPeriod(fromDate, toDate.plusDays(1)));
+                .and(CourseDaySpecifications.inPeriod(fromDate, toDate));
         List<DayEntity> days = dayRepository.findAll(daysByCoursesInPeriod);
 
         return courses
