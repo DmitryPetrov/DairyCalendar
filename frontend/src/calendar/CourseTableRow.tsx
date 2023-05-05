@@ -1,8 +1,9 @@
 import {DateTime} from "luxon";
 import {Course} from "../model/Course";
 import React from "react";
-import {Collapse, List, ListItemButton, ListItemText} from "@mui/material";
+import {ListItemButton, ListItemText} from "@mui/material";
 import CourseTableCell from "./CourseTableCell";
+import OneCourseList from "./OneCourseList";
 
 interface RowProps {
     dates: DateTime[];
@@ -13,7 +14,6 @@ export default function CourseTableRow({dates, course}: RowProps) {
     const [open, setOpen] = React.useState(false);
 
     const handleClick = () => {
-        console.log(open)
         setOpen(!open);
     };
 
@@ -27,13 +27,10 @@ export default function CourseTableRow({dates, course}: RowProps) {
                         grade={course.days.find(day => date.equals(day.date))?.assessment}/>
                 )}
             </ListItemButton>
-            <Collapse in={open} timeout="auto" unmountOnExit>
-                <List component="div" disablePadding dense={true}>
-                    <ListItemButton>
-                        <ListItemText primary={course.description} />
-                    </ListItemButton>
-                </List>
-            </Collapse>
+            <OneCourseList
+                open={open}
+                handleClose={handleClick}
+                courseId={course.id}/>
         </div>
     );
 }

@@ -20,7 +20,10 @@ export const getCourses = (
     readPayload: (courses: Course[], fromDate: DateTime, toDate: DateTime) => void
 ) => {
     client
-        .get('/course', {params: params})
+        .get('/course', {
+            params: params,
+            paramsSerializer: { serialize: (params: any) => Qs.stringify(params, {arrayFormat: 'comma'}) }
+        })
         .then(response => {
             readPayload(
                 response.data.courses.map((item: any) => new Course(item)),

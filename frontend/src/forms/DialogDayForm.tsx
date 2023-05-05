@@ -52,7 +52,6 @@ export default function DialogDayForm({ open, handleClose, date, courses}: RowPr
                 return []
             }
         })
-        console.log(days)
         //эта функция отрабатывает только для курсов к которых оценка не проставлена
         //для проставленных оценок функция просто копирует значения
         setDays(days);
