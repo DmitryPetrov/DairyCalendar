@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 import {Task} from "../model/Task";
-import {closeTask, deleteTask, getTasks, postTask, putTask} from "../model/api";
+import {getTasks} from "../model/api";
 import {
     Button,
     Chip,
@@ -16,60 +16,21 @@ import {
     TableRow,
     Typography
 } from "@mui/material";
-import TaskForm from "./TaskForm";
 import DoneIcon from '@mui/icons-material/Done';
 import EditIcon from '@mui/icons-material/Edit';
 import AddIcon from '@mui/icons-material/Add';
 import TaskFilters from "./TaskFilters";
 import Box from "@mui/material/Box";
+import {useNavigate} from "react-router-dom";
 
 export default function TaskTableView() {
-
+    const navigate = useNavigate();
     const [tasks, setTasks] = useState<Task[]>([])
     const [filters, setFilters] = useState<{}>({})
-    const [reload, setReload] = useState<boolean>(false)
-    React.useEffect(() => {
-        getTasks(filters, readPayload)
-    }, [reload]);
+    React.useEffect(() => getTasks(filters, readPayload), []);
     function readPayload(tasks: Task[]) {
         setTasks(tasks);
     }
-
-    function saveTask(task: Task) {
-        if (typeof task.id == 'undefined') {
-            postTask(task)
-        } else {
-            putTask(task);
-        }
-        handleClose()
-    }
-
-    const [task, setTask] = useState<Task | undefined>(undefined);
-    const [parentTaskId, setPatentTaskId] = useState<number | null>(null);
-    const [open, setOpen] = React.useState(false);
-    const createTask = () => {
-        setTask(undefined);
-        setPatentTaskId(null);
-        setOpen(true);
-    };
-    const openTask = (task: Task) => {
-        setTask(task);
-        setPatentTaskId(task.parentId);
-        setOpen(true);
-    };
-    const addChild = (task: Task) => {
-        if (typeof task.id == 'undefined') {
-            return
-        }
-        setTask(undefined);
-        setPatentTaskId(task.id);
-        setOpen(true);
-    };
-    const handleClose = () => {
-        setOpen(false);
-        setReload(!reload);
-    };
-
     const onApplyFilters = (filters: {}) => {
         setFilters(filters);
         getTasks(filters, readPayload)
@@ -77,7 +38,10 @@ export default function TaskTableView() {
 
     return (
         <div>
-            <Fab color="primary" aria-label="add" onClick={createTask} className="add_element_button">
+            <Fab color="primary"
+                 aria-label="add"
+                 onClick={() => navigate('/task/new')}
+                 className="add_element_button">
                 <AddIcon />
             </Fab>
             <Box sx={{mb:'16px'}}>
@@ -93,8 +57,8 @@ export default function TaskTableView() {
                             <TableCell align="center"><Typography variant="h6">Finished at</Typography></TableCell>
                             <TableCell align="center"><Typography variant="h6">Tags</Typography></TableCell>
                             <TableCell align="center"><Typography variant="h6">Edit</Typography></TableCell>
-                            <TableCell align="center"><Typography variant="h6">Show parent</Typography></TableCell>
-                            <TableCell align="center"><Typography variant="h6">Add child</Typography></TableCell>
+                            <TableCell align="center"><Typography variant="h6">Parent</Typography></TableCell>
+                            <TableCell align="center"><Typography variant="h6">Add subtask</Typography></TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -117,27 +81,20 @@ export default function TaskTableView() {
                                     </Stack>
                                 </TableCell>
                                 <TableCell align="center">
-                                    <Button onClick={() => openTask(task)}><EditIcon /></Button>
+                                    <Button onClick={() => navigate('/task/' + task.id)}><EditIcon/></Button>
                                 </TableCell>
                                 <TableCell align="center">
                                     <Button>{task.parentId}</Button>
                                 </TableCell>
                                 <TableCell align="center">
-                                    <Button onClick={() => addChild(task)}>Add child</Button>
+                                    <Button onClick={() => navigate('/task/new?parent=' + task.id)}>
+                                        Add subtask ...
+                                    </Button>
                                 </TableCell>
                             </TableRow>
                         ))}
                     </TableBody>
                 </Table>
-                <TaskForm
-                    open={open}
-                    task={task}
-                    parentTaskId={parentTaskId}
-                    closeTask={closeTask}
-                    onSave={saveTask}
-                    onBack={handleClose}
-                    onDelete={deleteTask}
-                />
             </TableContainer>
         </div>
     );

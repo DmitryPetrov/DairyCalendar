@@ -2,11 +2,9 @@ import React, {SyntheticEvent, useState} from "react";
 import {
     Autocomplete,
     Button,
-    Dialog,
-    DialogActions,
-    DialogContent,
-    DialogTitle,
+    Divider,
     FormControlLabel,
+    Grid,
     Rating,
     Stack,
     Switch,
@@ -14,20 +12,16 @@ import {
     Typography
 } from "@mui/material";
 import {Task} from "../model/Task";
-import {getTags} from "../model/api";
+import {closeTask, deleteTask, getTags, postTask, putTask} from "../model/api";
+import {useNavigate} from "react-router-dom";
 
 interface TaskFormProps {
-    task: Task | undefined;
-    parentTaskId: number | null;
-    open: boolean;
-    closeTask: (id: number) => void;
-    onSave: (task: Task) => void;
-    onBack: () => void;
-    onDelete: (id: number) => void;
+    task: Task;
 }
 
-export default function TaskForm({task, parentTaskId, open, closeTask, onSave, onBack, onDelete}: TaskFormProps) {
-
+export default function TaskForm({task}: TaskFormProps) {
+    const navigate = useNavigate();
+    React.useEffect(() => getTags(setTagsList), []);
     React.useEffect(() => {
         setTitle(task?.title ?? "");
         setDescription(task?.description ?? "");
@@ -35,7 +29,6 @@ export default function TaskForm({task, parentTaskId, open, closeTask, onSave, o
         setDone(task?.done ?? false);
         setPriority(task?.priority ?? 0);
         setReadonly(task?.finishedAt != null);
-        getTags(setTagsList)
     }, [task]);
 
     const [tagsList, setTagsList] = useState<string[]>([]);
@@ -48,39 +41,65 @@ export default function TaskForm({task, parentTaskId, open, closeTask, onSave, o
 
     const handleSubmit = (event: SyntheticEvent) => {
         event.preventDefault();
-        onSave(new Task({
-                id: task?.id ?? undefined,
-                title: title,
-                description: description,
-                priority: priority,
-                done: done,
-                finishedAt: task?.finishedAt ?? null,
-                tags: tags,
-                parentId: parentTaskId
+        saveTask(new Task({
+            id: task?.id,
+            title: title,
+            description: description,
+            priority: priority,
+            done: done,
+            finishedAt: task?.finishedAt?.toISO?.(),
+            tags: tags,
+            parentId: task?.parentId
         }))
-        onBack();
     };
-
-    function deleteTask(id: number | undefined) {
-        if (typeof id == 'number') {
-            onDelete(id)
+    function saveTask(task: Task) {
+        if (isEmpty(task.id)) {
+            postTask(task, (id) => openTask(id));
+        } else {
+            putTask(task, () => navigate(0));
         }
-        onBack();
+    }
+
+    function removeTask(id: number | undefined) {
+        if (typeof id == 'number') {
+            deleteTask(id, () => navigate('/task'));
+        }
     }
     function closeTaskFunc(id: number | undefined) {
         if (typeof id == 'number') {
-            closeTask(id)
+            closeTask(id, () => navigate(0))
         }
-        onBack();
+    }
+    function openTask(id: number | null | undefined) {
+        //ID приходит строкой от кнопки "перейти к родительской задаче" на странице новой задачи
+        //ХЗ за херня, МБ неявное преобразование типов string->object a null==object
+        if ((typeof id == 'number') || (typeof id == 'string')) {
+            navigate('/task/' + id);
+        }
+    }
+    function isEmpty(element: any) {
+        if (element == null) {
+            return true;
+        }
+        return typeof element == 'undefined';
     }
 
     return(
-        <Dialog open={open} onClose={onBack} fullWidth maxWidth="xl" sx={{height: '100%'}}>
-            <DialogTitle align="center">{title}</DialogTitle>
-            <br/>
-            <DialogContent>
-                <Stack direction="row" spacing={2}>
-                    <Stack spacing={2} sx={{width: '30%'}}>
+        <Stack spacing={3}>
+            <Stack direction="row" spacing={2}>
+                <Button variant="outlined" onClick={handleSubmit}>Save</Button>
+                <Button disabled={isEmpty(task?.id) || !isEmpty(task?.finishedAt)}
+                        variant="outlined" onClick={() => closeTaskFunc(task?.id)}>
+                    Close task
+                </Button>
+                <Button disabled={isEmpty(task?.id)} variant="outlined" onClick={() => removeTask(task?.id)}>
+                    Delete task
+                </Button>
+            </Stack>
+
+            <Grid container spacing={2}>
+                <Grid item xs={3}>
+                    <Stack spacing={2} sx={{width: '100%'}}>
                         <TextField
                             id="outlined-basic"
                             label="Title"
@@ -104,47 +123,57 @@ export default function TaskForm({task, parentTaskId, open, closeTask, onSave, o
                                 onChange={(e) => setDone(e.target.checked)}/>}
                             label="Done" />
                         <TextField
-                            id="outlined-basic"
                             label="Finished at"
                             variant="outlined"
-                            value={task?.finishedAt?.toISODate?.() ?? undefined}
-                            onChange={() => {}}
+                            value={task?.finishedAt?.toISODate?.() ?? ""}
                             disabled/>
                         <Autocomplete
                             multiple
-                            id="tags-outlined"
                             options={tagsList}
                             getOptionLabel={(option) => option}
-                            defaultValue={task?.tags}
+                            value={tags}
                             freeSolo
                             filterSelectedOptions
-                            renderInput={(params) => (
-                                <TextField
-                                    {...params}
-                                    label="Tags"
-                                    placeholder="tag"
-                                />
-                            )}
+                            renderInput={params => <TextField {...params} label="Tags" placeholder="tag"/>}
                             onChange={(e, value) => {setTags(value)}}/>
                     </Stack>
+                </Grid>
+                <Grid item xs={6}>
                     <TextField
-                        sx={{width: '70%'}}
+                        sx={{width: '100%'}}
                         id="outlined-basic"
                         label="Description"
                         multiline
-                        rows={35}
+                        rows={20}
                         variant="outlined"
                         disabled={readonly}
                         value={description}
                         onChange={(e) => setDescription(e.target.value)}/>
-                </Stack>
-            </DialogContent>
-            <DialogActions>
-                {(typeof task?.id === 'number') ? <Button onClick={() => deleteTask(task?.id)}>Delete task</Button> : <div></div>}
-                {(typeof task?.id === 'number') ? <Button onClick={() => closeTaskFunc(task?.id)}>Close task</Button> : <div></div>}
-                <Button onClick={handleSubmit}>Save</Button>
-                <Button onClick={onBack}>Cancel</Button>
-            </DialogActions>
-        </Dialog>
+                </Grid>
+                <Grid item xs={3}>
+                    <Stack spacing={2} sx={{width: '100%'}}>
+                        <Button disabled={isEmpty(task?.parentId)}
+                                variant="outlined"
+                                onClick={() => openTask(task?.parentId)}>
+                            Parent: {task?.parent?.title}
+                        </Button>
+                        <Divider/>
+                        {task?.children.map((child: Task) => {
+                            return (
+                                <Button variant="outlined" onClick={() => openTask(child?.id)} key={child?.id}>
+                                    Child: {child?.title}
+                                </Button>
+                            )
+                        })}
+                        {isEmpty(task?.id) ? '' :
+                            <Button variant="outlined"
+                                    onClick={() => navigate('/task/new?parent=' + task.id)}>
+                                Add subtask ...
+                            </Button>}
+                    </Stack>
+                </Grid>
+            </Grid>
+        </Stack>
     )
+
 }

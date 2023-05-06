@@ -10,6 +10,8 @@ export class Task {
     finishedAt: DateTime | null = null;
     parentId: number | null = null;
     tags: string[] = [];
+    parent: Task | null = null;
+    children: Task[] = [];
 
     constructor(item: any) {
         if (!item) return;
@@ -22,6 +24,8 @@ export class Task {
         if (item.finishedAt) this.finishedAt = DateTime.fromISO(item.finishedAt);
         if (item.parentId) this.parentId = item.parentId;
         if (item.tags) this.tags = item.tags;
+        if (item.parent) this.parent = item.parent;
+        if (item.children) this.children = item.children.map((child: any) => new Task(child));
     }
 
     public toPostPayload() {

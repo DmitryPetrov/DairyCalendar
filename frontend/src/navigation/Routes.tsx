@@ -5,6 +5,8 @@ import {createBrowserRouter, RouterProvider} from "react-router-dom";
 import CourseViewPage from "../calendar/CourseViewPage";
 import NavigationTabs from "./NavigationTabs";
 import TaskTableView from "../task/TaskTableView";
+import TaskEdit from "../task/TaskEdit";
+import TaskCreate from "../task/TaskCreate";
 
 interface AppTabsProps {
     onSuccessLogout: () => void;
@@ -34,6 +36,14 @@ export default function Routes({onSuccessLogout}: AppTabsProps) {
             {
                 path: "task",
                 element: <TaskTableView/>
+            },
+            {
+                path: "task/:id",
+                element: <TaskEdit/>
+            },
+            {
+                path: "task/new",
+                element: <TaskCreate/>
             }
         ]
     }]);

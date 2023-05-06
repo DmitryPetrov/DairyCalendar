@@ -56,27 +56,31 @@ export const postCourse = (course: Course) => {
         .catch((error: TypeError) => {handleError(error)});
 }
 
-export const postTask = (task: Task) => {
+export const postTask = (task: Task, readPayload: (id: number) => void) => {
     client
         .post(`/task`, task.toPostPayload())
+        .then(response => readPayload(response.data.id))
         .catch((error: TypeError) => {handleError(error)});
 }
 
-export const putTask = (task: Task) => {
+export const putTask = (task: Task, readPayload: (id: number) => void) => {
     client
         .put(`/task/` + task.id, task.toPostPayload())
+        .then(response => readPayload(response.data.id))
         .catch((error: TypeError) => {handleError(error)});
 }
 
-export const closeTask = (id: number) => {
+export const closeTask = (id: number, readPayload: (id: number) => void) => {
     client
         .put(`/task/` + id + '/close')
+        .then(response => readPayload(response.data.id))
         .catch((error: TypeError) => {handleError(error)});
 }
 
-export const deleteTask = (id: number) => {
+export const deleteTask = (id: number, onSuccess: () => void) => {
     client
         .delete(`/task/` + id)
+        .then(response => onSuccess())
         .catch((error: TypeError) => {handleError(error)});
 }
 
@@ -92,6 +96,13 @@ export const getTasks = (
         .then(response => {
             readPayload(response.data.map((item: any) => new Task(item)))
         })
+        .catch((error: TypeError) => {handleError(error)});
+}
+
+export const getTask = (id: number, readPayload: (task: Task) => void) => {
+    client
+        .get(`/task/` + id)
+        .then(response => readPayload(new Task(response.data)))
         .catch((error: TypeError) => {handleError(error)});
 }
 
