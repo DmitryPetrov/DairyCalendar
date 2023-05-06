@@ -1,7 +1,7 @@
 import React from "react";
 import LoginForm from "../forms/Login";
-import AppTabs from "./AppTabs";
 import {isLoggedIn} from "../model/api";
+import Routes from "./Routes";
 
 export default function AuthSwitcher() {
     const [loggedIn, setLoggedIn] = React.useState<boolean>(false);
@@ -17,7 +17,7 @@ export default function AuthSwitcher() {
     }, []);
 
     if (loggedIn) {
-        return <AppTabs onSuccessLogout={onSuccessLogout}/>
+        return <Routes onSuccessLogout={onSuccessLogout}/>
     } else {
         return <LoginForm onSuccessLogin={onSuccessLogin}/>
     }

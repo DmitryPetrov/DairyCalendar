@@ -1,13 +1,9 @@
 import React, {SyntheticEvent, useState} from "react";
 import {Course} from "../model/Course";
 import {Box, Button, Stack, TextField} from "@mui/material";
+import {postCourse} from "../model/api";
 
-interface CourseFormProps {
-    onSave: (course: Course) => void;
-    onCancel: () => void;
-}
-
-export default function CourseForm({onSave, onCancel}: CourseFormProps) {
+export default function CourseForm() {
 
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
@@ -15,7 +11,7 @@ export default function CourseForm({onSave, onCancel}: CourseFormProps) {
 
     const handleSubmit = (event: SyntheticEvent) => {
         event.preventDefault();
-        onSave(new Course({name, description, tags}))
+        postCourse(new Course({name, description, tags}));
     };
 
     return(

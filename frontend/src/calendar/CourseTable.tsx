@@ -11,7 +11,7 @@ export default function CourseTable() {
     const [reload, setReload] = useState<boolean>(false)
 
     React.useEffect(() => {
-        getCourses(new GetCoursesRequestParams(DateTime.now().minus({days: 28}), DateTime.now(), []), readPayload)
+        getCourses(new GetCoursesRequestParams(DateTime.now().minus({days: 28}), DateTime.now()), readPayload)
     }, [reload]);
 
     function readPayload(courses: Course[], fromDate: DateTime, toDate: DateTime) {
