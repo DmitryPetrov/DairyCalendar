@@ -53,12 +53,16 @@ public class TaskService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public TaskDto getTask(long id) {
         //todo check access
-        return taskRepository
+        TaskEntity task = taskRepository
                 .findById(id)
-                .map(taskMapper::toDto)
                 .orElseThrow(() -> new RecordIsNotExistException(TaskEntity.class, id));
+        TaskEntity parent = task.getParent();
+        List<TaskEntity> children = taskRepository
+                .findAll(Specification.where(TaskSpecifications.byParent(task.getId())));
+        return taskMapper.toDto(task, parent, children);
     }
 
     @Transactional

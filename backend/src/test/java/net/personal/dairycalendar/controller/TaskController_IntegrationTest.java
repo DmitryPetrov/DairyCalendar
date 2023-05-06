@@ -31,6 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -229,5 +230,31 @@ class TaskController_IntegrationTest extends AbstractTest {
         for (String tag : tagsBeforeDelete) {
             assertEquals(1, tagRepository.findAllByTagIn(Set.of(tag)).size(), "Tag [" + tag + "] was deleted");
         }
+    }
+
+    @Test
+    @WithUserDetails(USER_1_USERNAME)
+    @DisplayName("Get task")
+    void getTask() throws Exception {
+        TaskEntity root = saveTask(USER_1_USERNAME, Set.of(TAG_1_TITLE, TAG_2_TITLE), false, null, null);
+        TaskEntity task = saveTask(USER_1_USERNAME, Set.of(TAG_1_TITLE, TAG_2_TITLE, TAG_3_TITLE), false, null, root);
+        TaskEntity child1 = saveTask(USER_1_USERNAME, Set.of(TAG_4_TITLE, TAG_2_TITLE, TAG_3_TITLE), false, null, task);
+        TaskEntity child2 = saveTask(USER_1_USERNAME, Set.of(TAG_5_TITLE, TAG_2_TITLE, TAG_3_TITLE), false, null, task);
+
+        MvcResult result = mockMvc
+                .perform(get(TaskController.URL_GET_TASK, task.getId()))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andReturn();
+        TaskDto payload = objectMapper.readValue(result.getResponse().getContentAsString(), TaskDto.class);
+
+        assertEquals(payload.getId(), task.getId(), "Task id wrong");
+        assertEquals(payload.getDescription(), task.getDescription(),"Task description wrong");
+        assertEquals(payload.getTags(), task.getTags(), "Task tags wrong");
+        assertEquals(payload.getParent().getId(), root.getId(),"Parent task wrong");
+        assertTrue(payload.getChildren().stream().anyMatch(child -> child.getId() == child1.getId()),
+                   "Child task1 absent");
+        assertTrue(payload.getChildren().stream().anyMatch(child -> child.getId() == child2.getId()),
+                   "Child task2 absent");
     }
 }

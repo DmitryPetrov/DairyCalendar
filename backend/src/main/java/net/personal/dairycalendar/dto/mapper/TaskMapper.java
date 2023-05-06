@@ -7,6 +7,10 @@ import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.factory.Mappers;
 
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
 @Mapper(componentModel = "spring")
 public interface TaskMapper {
 
@@ -21,11 +25,25 @@ public interface TaskMapper {
     TaskEntity toEntityWithoutTags(TaskDto dto);
 
     @Mapping(target = "parentId", source = "parent.id")
+    @Mapping(target = "parent", ignore = true)
+    @Mapping(target = "children", ignore = true)
     TaskDto toDtoWithoutTags(TaskEntity entity);
 
     default TaskDto toDto(TaskEntity entity) {
         TaskDto taskDto = toDtoWithoutTags(entity);
         taskDto.addTags(entity.getTags());
+        return taskDto;
+    }
+
+    default TaskDto toDto(TaskEntity entity, TaskEntity parent, List<TaskEntity> children) {
+        TaskDto taskDto = toDtoWithoutTags(entity);
+        taskDto.addTags(entity.getTags());
+        taskDto.setParent(Optional.ofNullable(parent).map(this::toDto).orElse(null));
+        taskDto.setChildren(
+                children.stream()
+                        .map(this::toDto)
+                        .collect(Collectors.toList())
+        );
         return taskDto;
     }
 

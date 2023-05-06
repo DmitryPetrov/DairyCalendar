@@ -24,7 +24,7 @@ public class TaskEntity extends EntityWithTags {
     private String title;
     @Column(name = "description", length = 10000)
     private String description;
-    @Column(name = "position")
+    @Column(name = "position")//todo remove
     private int position;
     @Column(name = "priority")
     private int priority;

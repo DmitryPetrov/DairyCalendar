@@ -40,4 +40,11 @@ public class TaskSpecifications {
                 })
                 .orElse(null);
     }
+
+    public static Specification<TaskEntity> byParent(long parentTaskId) {
+        return (root, query, criteriaBuilder) -> Optional
+                .ofNullable(parentTaskId)
+                .map(id -> criteriaBuilder.equal(root.get(TaskEntity_.PARENT).get(TaskEntity_.ID), id))
+                .orElse(null);
+    }
 }
