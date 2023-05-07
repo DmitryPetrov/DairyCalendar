@@ -142,7 +142,8 @@ class TaskController_IntegrationTest extends AbstractTest {
     @WithUserDetails(USER_1_USERNAME)
     @DisplayName("Update task")
     void updateTask() throws Exception {
-        TaskEntity task = saveTask(USER_1_USERNAME, Set.of(TAG_1_TITLE, TAG_2_TITLE), false, null, null);
+        TaskEntity parent = saveTask(USER_1_USERNAME, Set.of(TAG_1_TITLE, TAG_2_TITLE), false, null, null);
+        TaskEntity task = saveTask(USER_1_USERNAME, Set.of(TAG_1_TITLE, TAG_2_TITLE), false, null, parent);
         TaskDto payload = new TaskDto();
         payload.setTitle("title update");
         payload.setDescription("description update");
@@ -150,7 +151,7 @@ class TaskController_IntegrationTest extends AbstractTest {
         payload.setPriority(111);
         payload.setDone(true);
         payload.setFinishedAt(null);
-        payload.setParentId(null);
+        payload.setParentId(parent.getId());
         payload.setTags(Set.of(TAG_2_TITLE, TAG_3_TITLE));
         Set<String> tagsBeforeUpdate = task.getTags();
 
@@ -177,7 +178,7 @@ class TaskController_IntegrationTest extends AbstractTest {
         assertEquals(payload.getPriority(), entity.getPriority(), "Task priority wrong");
         assertEquals(payload.isDone(), entity.isDone(), "Task done flag wrong");
         assertNotNull(entity.getFinishedAt(), "Task not finished");
-        assertNull(entity.getParent(), "Task parent wrong");
+        assertEquals(entity.getParent().getId(), parent.getId(), "Task parent wrong");
         assertEquals(payload.getTags(), entity.getTags(), "Task tags wrong");
         for (String tag : payload.getTags()) {
             assertEquals(1, tagRepository.findAllByTagIn(Set.of(tag)).size(),
