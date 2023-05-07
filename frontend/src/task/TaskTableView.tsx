@@ -37,7 +37,7 @@ export default function TaskTableView() {
     }
 
     return (
-        <div>
+        <Paper className="page_container" elevation={3}>
             <Fab color="primary"
                  aria-label="add"
                  onClick={() => navigate('/task/new')}
@@ -96,6 +96,6 @@ export default function TaskTableView() {
                     </TableBody>
                 </Table>
             </TableContainer>
-        </div>
+        </Paper>
     );
 }
