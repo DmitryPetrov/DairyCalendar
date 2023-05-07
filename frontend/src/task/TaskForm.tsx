@@ -5,6 +5,7 @@ import {
     Divider,
     FormControlLabel,
     Grid,
+    Paper,
     Rating,
     Stack,
     Switch,
@@ -14,6 +15,8 @@ import {
 import {Task} from "../model/Task";
 import {closeTask, deleteTask, getTags, postTask, putTask} from "../model/api";
 import {useNavigate} from "react-router-dom";
+import AddIcon from '@mui/icons-material/Add';
+import ArrowRightIcon from '@mui/icons-material/ArrowRight';
 
 interface TaskFormProps {
     task: Task;
@@ -85,14 +88,18 @@ export default function TaskForm({task}: TaskFormProps) {
     }
 
     return(
-        <Stack spacing={3}>
-            <Stack direction="row" spacing={2}>
-                <Button variant="outlined" onClick={handleSubmit}>Save</Button>
+        <Paper className="page_container" elevation={3}>
+            <Stack direction="row" className="task_button_group" spacing={2}>
+                <Button variant="outlined" onClick={handleSubmit} size="large">Save</Button>
                 <Button disabled={isEmpty(task?.id) || !isEmpty(task?.finishedAt)}
-                        variant="outlined" onClick={() => closeTaskFunc(task?.id)}>
+                        variant="outlined" onClick={() => closeTaskFunc(task?.id)}
+                        size="large">
                     Close task
                 </Button>
-                <Button disabled={isEmpty(task?.id)} variant="outlined" onClick={() => removeTask(task?.id)}>
+                <Button disabled={isEmpty(task?.id)}
+                        variant="outlined"
+                        onClick={() => removeTask(task?.id)}
+                        size="large">
                     Delete task
                 </Button>
             </Stack>
@@ -144,7 +151,7 @@ export default function TaskForm({task}: TaskFormProps) {
                         id="outlined-basic"
                         label="Description"
                         multiline
-                        rows={20}
+                        rows={30}
                         variant="outlined"
                         disabled={readonly}
                         value={description}
@@ -154,26 +161,30 @@ export default function TaskForm({task}: TaskFormProps) {
                     <Stack spacing={2} sx={{width: '100%'}}>
                         <Button disabled={isEmpty(task?.parentId)}
                                 variant="outlined"
+                                style={{justifyContent: "flex-start"}}
                                 onClick={() => openTask(task?.parentId)}>
-                            Parent: {task?.parent?.title}
+                            master task <ArrowRightIcon/> {task?.parent?.title}
                         </Button>
                         <Divider/>
                         {task?.children.map((child: Task) => {
                             return (
-                                <Button variant="outlined" onClick={() => openTask(child?.id)} key={child?.id}>
-                                    Child: {child?.title}
+                                <Button variant="outlined"
+                                        style={{justifyContent: "flex-start"}}
+                                        onClick={() => openTask(child?.id)}
+                                        key={child?.id}>
+                                    subtask <ArrowRightIcon/> {child?.title}
                                 </Button>
                             )
                         })}
                         {isEmpty(task?.id) ? '' :
                             <Button variant="outlined"
                                     onClick={() => navigate('/task/new?parent=' + task.id)}>
-                                Add subtask ...
+                                <AddIcon/>
                             </Button>}
                     </Stack>
                 </Grid>
             </Grid>
-        </Stack>
+        </Paper>
     )
 
 }

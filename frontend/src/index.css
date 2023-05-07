@@ -50,7 +50,7 @@
 .page_container {
     margin-left: 8px;
     margin-right: 8px;
-    padding: 8px;
+    padding: 16px;
 }
 
 .course_title {
@@ -92,4 +92,8 @@
 }
 .calendar_cell_icon.undone {
     color: lightcoral;
+}
+
+.task_button_group {
+    padding-bottom: 32px;
 }
