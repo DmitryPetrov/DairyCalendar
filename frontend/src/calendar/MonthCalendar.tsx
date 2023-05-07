@@ -1,7 +1,9 @@
 import * as React from "react";
 import {DateTime} from "luxon";
 import {Day} from "../model/Day";
-import {Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography} from "@mui/material";
+import {Paper, Table, TableBody, TableCell, TableHead, TableRow, Typography} from "@mui/material";
+import CloseIcon from '@mui/icons-material/Close';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 
 interface RowProps {
     days: Day[]
@@ -24,12 +26,12 @@ export default function MonthCalendar({ days, year, month }: RowProps) {
         }
         table[week].push(DateTime.local(year, month, day))
     }
-    while (table[week].length < 8){
+    while (table[week].length < 7){
         table[week].push(undefined)
     }
 
     return (
-        <TableContainer component={Paper} >
+        <Paper component={Paper} >
             <Table size="small">
                 <TableHead>
                     <TableRow>
@@ -54,14 +56,20 @@ export default function MonthCalendar({ days, year, month }: RowProps) {
                                 if (grade === undefined) {
                                     return <TableCell align="center" key={'day'+index2}>{item?.day}</TableCell>
                                 } else if (grade > 0) {
-                                    return <TableCell align="center" key={'day'+index2} className="course_table_cell_positiv">{item?.day}</TableCell>
+                                    return <TableCell align="center" key={'day'+index2} className="calendar_cell">
+                                        <span className="calendar_cell_text">{item?.day}</span>
+                                        <CheckCircleIcon className="calendar_cell_icon done"/>
+                                    </TableCell>
                                 }
-                                return <TableCell align="center" key={'day'+index2} className="course_table_cell_zero">{item?.day}</TableCell>
+                                return <TableCell align="center" key={'day'+index2} className="calendar_cell">
+                                    <span className="calendar_cell_text">{item?.day}</span>
+                                    <CloseIcon className="calendar_cell_icon undone"/>
+                                </TableCell>
                             })}
                         </TableRow>
                     })}
                 </TableBody>
             </Table>
-        </TableContainer>
+        </Paper>
     );
 }

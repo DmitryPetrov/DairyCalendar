@@ -1,12 +1,11 @@
 import * as React from 'react';
 import {useState} from 'react';
 import {Course} from "../model/Course";
-import {Grid, Typography} from "@mui/material";
+import {Grid, Paper, Typography} from "@mui/material";
 import {getCourses} from "../model/api";
 import {GetCoursesRequestParams} from "../model/GetCoursesRequestParams";
 import {DateTime} from "luxon";
 import MonthCalendar from "./MonthCalendar";
-import Box from "@mui/material/Box";
 import {useParams} from "react-router-dom";
 
 export default function CourseViewPage() {
@@ -27,10 +26,10 @@ export default function CourseViewPage() {
     }
 
     return (
-        <Box>
-            <Typography variant="h3">{course?.name}</Typography>
-            <Typography variant="h6">{course?.description}</Typography>
-            <Grid container spacing={2}>
+        <Paper className="page_container" elevation={3}>
+            <Typography variant="h3" className="course_title">{course?.name}</Typography>
+            <Typography variant="h6" className="course_description">{course?.description}</Typography>
+            <Grid container spacing={2} className="course_calendar">
                 {Array.from(Array(12)).map((_, index) => {
                     let date = DateTime.now().minus({month: 11}).plus({month: index})
                     return <Grid item xs={3} key={index}>
@@ -39,6 +38,6 @@ export default function CourseViewPage() {
                     </Grid>
                 })}
             </Grid>
-        </Box>
+        </Paper>
     );
 }

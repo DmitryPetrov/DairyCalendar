@@ -1,8 +1,7 @@
 import * as React from 'react';
 import {useState} from 'react';
-import Box from '@mui/material/Box';
 import {Course} from "../model/Course";
-import {Divider, List, ListItem, ListItemButton, ListItemText,} from "@mui/material";
+import {Divider, List, ListItem, ListItemButton, ListItemText, Paper,} from "@mui/material";
 import DialogDayForm from "../forms/DialogDayForm";
 import {DateTime} from "luxon";
 import CourseTableRow from "./CourseTableRow";
@@ -29,7 +28,7 @@ export default function CourseTableView({courses, dates, reloadTable}: TableProp
     };
 
     return (
-        <Box sx={{width: '100%'}}>
+        <Paper className="page_container" elevation={3}>
             <List dense={true}>
                 <ListItem>
                     <ListItemText primary="Course name" className="course_table_title"/>
@@ -51,7 +50,7 @@ export default function CourseTableView({courses, dates, reloadTable}: TableProp
                     date={date}
                     courses={courses}/>
             </List>
-        </Box>
+        </Paper>
     )
 
 }
