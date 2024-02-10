@@ -30,4 +30,9 @@ public class CourseSpecifications {
                     .value(coursesId);
         };
     }
+
+    public static Specification<CourseEntity> isPaused(boolean paused) {
+        return (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get(CourseEntity_.PAUSED), paused);
+    }
+
 }

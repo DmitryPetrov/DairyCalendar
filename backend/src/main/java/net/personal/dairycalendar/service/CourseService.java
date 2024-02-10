@@ -42,11 +42,13 @@ public class CourseService {
             LocalDate fromDate,
             LocalDate toDate,
             Set<String> tags,
-            Set<Long> coursesId
+            Set<Long> coursesId,
+            boolean paused
     ) {
         Specification<CourseEntity> specification = Specification
                 .where(CourseSpecifications.byUser(authenticationService.getCurrentUser().getId()))
                 .and(CourseSpecifications.byId(coursesId))
+                .and(CourseSpecifications.isPaused(paused))
                 .and(EntityWithTagsSpecifications.hasTags(tags, CourseEntity.class));
         List<CourseEntity> courses = courseRepository.findAll(specification);
         Set<Long> coursesIdList = courses
@@ -103,6 +105,7 @@ public class CourseService {
         course.setTitle(courseDto.getTitle());
         course.setDescription(courseDto.getDescription());
         course.setPosition(courseDto.getPosition());
+        course.setPaused(courseDto.isPaused());
         tagService.updateTagCollection(course, courseDto.getTags());
         courseRepository.save(course);
     }

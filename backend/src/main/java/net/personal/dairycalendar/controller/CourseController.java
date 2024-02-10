@@ -35,7 +35,8 @@ public class CourseController {
             @RequestParam(required = false) LocalDate fromDate,
             @RequestParam(required = false) LocalDate toDate,
             @RequestParam(required = false) Set<String> tags,
-            @RequestParam(required = false) Set<Long> courses
+            @RequestParam(required = false) Set<Long> courses,
+            @RequestParam(required = false, defaultValue = "false") boolean paused
     ) {
         if (toDate == null) {
             toDate = LocalDate.now();
@@ -49,7 +50,7 @@ public class CourseController {
         if (courses == null) {
             courses = Set.of();
         }
-        List<CourseDto> result = service.getCoursesForCurrentUser(fromDate, toDate, tags, courses);
+        List<CourseDto> result = service.getCoursesForCurrentUser(fromDate, toDate, tags, courses, paused);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .contentType(MediaType.APPLICATION_JSON)

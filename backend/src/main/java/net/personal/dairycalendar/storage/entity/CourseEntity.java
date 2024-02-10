@@ -30,6 +30,8 @@ public class CourseEntity extends EntityWithTags{
     private String description;
     @Column(name = "position")
     private int position;
+    @Column(name = "paused")
+    private boolean paused;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="app-user_id", nullable = false)

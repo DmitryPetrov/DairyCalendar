@@ -20,7 +20,7 @@ public class DayController {
     private final DayService dayService;
 
     @PostMapping(value = "api/day")
-    public ResponseEntity<Void> addCourse(@RequestBody List<DayDto> dayDto) {
+    public ResponseEntity<Void> saveDay(@RequestBody List<DayDto> dayDto) {
         dayService.save(dayDto);
         return ResponseEntity.status(HttpStatus.OK).build();
     }

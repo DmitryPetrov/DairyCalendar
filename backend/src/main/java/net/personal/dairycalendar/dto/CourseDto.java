@@ -17,11 +17,20 @@ public class CourseDto {
     String description;
     Set<String> tags;
     Set<DayDto> days;
+    boolean paused;
 
     public CourseDto(String title, int position, String description, Set<String> tags) {
         this.title = title;
         this.position = position;
         this.description = description;
         this.tags = tags;
+    }
+
+    public CourseDto(String title, int position, String description, Set<String> tags, boolean paused) {
+        this.title = title;
+        this.position = position;
+        this.description = description;
+        this.tags = tags;
+        this.paused = paused;
     }
 }
