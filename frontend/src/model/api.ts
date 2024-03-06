@@ -13,6 +13,11 @@ const client = axios.create({
     baseURL: URL + '/api'
 });
 
+const anonymous = axios.create({
+    withCredentials: true,
+    baseURL: URL
+});
+
 export const DATE_FORMAT = "yyyy-MM-dd"
 
 export const getCourses = (
@@ -107,11 +112,14 @@ export const getTask = (id: number, readPayload: (task: Task) => void) => {
 }
 
 export const isLoggedIn = (ifLoggedIn: () => void, ifNotLoggedIn: () => void, ) => {
-    client
+    anonymous
         .get('/login/check')
         .then(response => {
-            console.log(response)
-            ifLoggedIn();
+            if (response.data === true) {
+                ifLoggedIn();
+            } else {
+                ifNotLoggedIn()
+            }
         })
         .catch((error: TypeError) => {
             ifNotLoggedIn()
@@ -119,7 +127,7 @@ export const isLoggedIn = (ifLoggedIn: () => void, ifNotLoggedIn: () => void, ) 
 }
 
 export const postLogin = (credentials: {username: string, password: string}, onSuccessLogin: () => void) => {
-    client
+    anonymous
         .post('/login/process', null,{params:credentials})
         .then(response => {
             console.log(response)
@@ -129,7 +137,7 @@ export const postLogin = (credentials: {username: string, password: string}, onS
 }
 
 export const postLogout = (onSuccessLogout: () => void) => {
-    client
+    anonymous
         .post('/logout', )
         .then(response => {
             console.log(JSON.stringify(response));

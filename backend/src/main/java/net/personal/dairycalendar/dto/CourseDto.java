@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Data
@@ -13,10 +14,12 @@ public class CourseDto {
     long id;
     @JsonProperty("name")
     String title;
+    @JsonProperty(defaultValue = "0")
     int position;
     String description;
-    Set<String> tags;
-    Set<DayDto> days;
+    Set<String> tags = new HashSet<>();
+    Set<DayDto> days = new HashSet<>();
+    @JsonProperty(defaultValue = "false")
     boolean paused;
 
     public CourseDto(String title, int position, String description, Set<String> tags) {

@@ -14,8 +14,11 @@ import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CommonsRequestLoggingFilter;
 
 import java.util.List;
+
+import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
 @EnableWebSecurity
@@ -26,11 +29,10 @@ public class SecurityConfig {
         return httpSecurity
                 .csrf().disable()
                 .cors()
-                    .configurationSource(corsConfigurationSource())
                 .and()
                 .authorizeHttpRequests((authorizeHttpRequests) ->
                     authorizeHttpRequests
-                            .requestMatchers("/index**", "/static/**", "/*.js", "/*.json", "/*.ico").permitAll()
+                            .requestMatchers("/index**", "/static/**", "/login/**", "/*.js", "/*.json", "/*.ico").permitAll()
                             .requestMatchers("/public").permitAll()
                             .requestMatchers("/secured").authenticated()
                             .requestMatchers("/api/**").authenticated()
@@ -40,7 +42,7 @@ public class SecurityConfig {
                 )
                 .formLogin()
                     .loginPage("/").permitAll()
-                    .loginProcessingUrl("/api/login/process").permitAll()
+                    .loginProcessingUrl("/login/process").permitAll()
                     .successHandler((req, resp, auth) -> System.out.println("===login successful==="))
                     .failureHandler((req, resp, auth) -> {
                         System.out.println("===login unsuccessful===");
@@ -48,11 +50,12 @@ public class SecurityConfig {
                     })
                 .and()
                 .logout()
-                    .logoutUrl("/api/logout").permitAll()
+                    .logoutUrl("/logout").permitAll()
                     .invalidateHttpSession(true)
                     .clearAuthentication(true)
                     .logoutSuccessHandler((req, resp, auth) -> System.out.println("===logout successful==="))
                 .and()
+                .httpBasic(withDefaults())
                 .exceptionHandling()
                 .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
                 .and()
@@ -62,10 +65,9 @@ public class SecurityConfig {
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:3000"));
-        configuration.setAllowedMethods(List.of("GET","POST","PUT","DELETE", "*"));
-        configuration.setAllowCredentials(true);
-        configuration.setAllowedHeaders(List.of("*"));
+        configuration.setAllowedOrigins(List.of(CorsConfiguration.ALL));
+        configuration.setAllowedMethods(List.of(CorsConfiguration.ALL));
+        configuration.setAllowedHeaders(List.of(CorsConfiguration.ALL));
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
