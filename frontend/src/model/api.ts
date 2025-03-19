@@ -51,7 +51,9 @@ export const getCourseList = () => {
 export const postDays = (days: Day[]) => {
     client
         .post(`/day`, days.map(item => item.toPostPayload()))
-        .then(response => console.log(response))
+        .then(response => {
+            window.location.reload();
+        })
         .catch((error: TypeError) => {handleError(error)});
 }
 
