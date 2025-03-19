@@ -97,3 +97,7 @@
 .task_button_group {
     padding-bottom: 32px;
 }
+
+.day_course_input {
+    width: 30%;
+}

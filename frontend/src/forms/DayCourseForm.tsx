@@ -42,14 +42,12 @@ export default function DayCourseForm({date, course, handleAssessment, setUndefi
 
     return(
         <ListItem>
-            <ListItemText primary={course.name}/>
-            <ToggleButtonGroup
-                value={alignment}
-                //defaultValue={course.days.find(day => moment(day.date).isSame(date))?.assessment}
-                exclusive
-                onChange={handleAlignment}
-                size="small"
-            >
+            <ListItemText primary={course.name} className="day_course_input"/>
+            <ToggleButtonGroup value={alignment}
+                               exclusive
+                               onChange={handleAlignment}
+                               size="small"
+                               fullWidth>
                 <ToggleButton value={0}>0</ToggleButton>
                 <ToggleButton value={1}>1</ToggleButton>
                 <ToggleButton value={2}>2</ToggleButton>
