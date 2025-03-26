@@ -10,7 +10,7 @@ import * as Qs from "qs";
 const URL = process.env.REACT_APP_API_ENDPOINT;
 const client = axios.create({
     withCredentials: true,
-    baseURL: URL + '/api'
+    baseURL: URL
 });
 
 const anonymous = axios.create({
@@ -25,7 +25,7 @@ export const getCourses = (
     readPayload: (courses: Course[], fromDate: DateTime, toDate: DateTime) => void
 ) => {
     client
-        .get('/course', {
+        .get('/api/course', {
             params: params,
             paramsSerializer: { serialize: (params: any) => Qs.stringify(params, {arrayFormat: 'comma'}) }
         })
@@ -42,7 +42,7 @@ export const getCourses = (
 export const getCourseList = () => {
     let courses: Course[] = [];
     client
-        .get(`/courseList`)
+        .get(`/api/courseList`)
         .then(response => {courses = response.data.map((item: any) => new Course(item))})
         .catch((error: TypeError) => {handleError(error)});
     return courses;
@@ -50,7 +50,7 @@ export const getCourseList = () => {
 
 export const postDays = (days: Day[]) => {
     client
-        .post(`/day`, days.map(item => item.toPostPayload()))
+        .post(`/api/day`, days.map(item => item.toPostPayload()))
         .then(response => {
             window.location.reload();
         })
@@ -59,34 +59,34 @@ export const postDays = (days: Day[]) => {
 
 export const postCourse = (course: Course) => {
     client
-        .post(`/course`, course.toPostPayload())
+        .post(`/api/course`, course.toPostPayload())
         .catch((error: TypeError) => {handleError(error)});
 }
 
 export const postTask = (task: Task, readPayload: (id: number) => void) => {
     client
-        .post(`/task`, task.toPostPayload())
+        .post(`/api/task`, task.toPostPayload())
         .then(response => readPayload(response.data.id))
         .catch((error: TypeError) => {handleError(error)});
 }
 
 export const putTask = (task: Task, readPayload: (id: number) => void) => {
     client
-        .put(`/task/` + task.id, task.toPostPayload())
+        .put(`/api/task/` + task.id, task.toPostPayload())
         .then(response => readPayload(response.data.id))
         .catch((error: TypeError) => {handleError(error)});
 }
 
 export const closeTask = (id: number, readPayload: (id: number) => void) => {
     client
-        .put(`/task/` + id + '/close')
+        .put(`/api/task/` + id + '/close')
         .then(response => readPayload(response.data.id))
         .catch((error: TypeError) => {handleError(error)});
 }
 
 export const deleteTask = (id: number, onSuccess: () => void) => {
     client
-        .delete(`/task/` + id)
+        .delete(`/api/task/` + id)
         .then(response => onSuccess())
         .catch((error: TypeError) => {handleError(error)});
 }
@@ -96,7 +96,7 @@ export const getTasks = (
     readPayload: (tasks: Task[]) => void
 ) => {
     client
-        .get('/task', {
+        .get('/api/task', {
             params: params,
             paramsSerializer: { serialize: (params: any) => Qs.stringify(params, {arrayFormat: 'comma'}) }
         })
@@ -108,13 +108,13 @@ export const getTasks = (
 
 export const getTask = (id: number, readPayload: (task: Task) => void) => {
     client
-        .get(`/task/` + id)
+        .get(`/api/task/` + id)
         .then(response => readPayload(new Task(response.data)))
         .catch((error: TypeError) => {handleError(error)});
 }
 
 export const isLoggedIn = (ifLoggedIn: () => void, ifNotLoggedIn: () => void, ) => {
-    anonymous
+    client
         .get('/login/check')
         .then(response => {
             if (response.data === true) {
@@ -150,7 +150,7 @@ export const postLogout = (onSuccessLogout: () => void) => {
 
 export const getTags = (readPayload: (tags: string[]) => void) => {
     client
-        .get('/tag')
+        .get('/api/tag')
         .then(response => {
             readPayload(response.data)
         })
