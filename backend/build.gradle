@@ -32,7 +32,7 @@ dependencies {
     annotationProcessor group: 'org.springframework.boot', name: 'spring-boot-configuration-processor', version: '3.2.1'
     annotationProcessor group: 'org.projectlombok', name: 'lombok', version: '1.18.26'
     testImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: '3.2.1'
-    testImplementation group: 'org.springframework.security', name: 'spring-security-test', version: '5.8.3'
+    testImplementation group: 'org.springframework.security', name: 'spring-security-test', version: '6.2.1'
 
     implementation group: 'org.mapstruct', name: 'mapstruct', version: '1.5.3.Final'
     annotationProcessor group: 'org.mapstruct', name: 'mapstruct-processor', version: '1.5.3.Final'
