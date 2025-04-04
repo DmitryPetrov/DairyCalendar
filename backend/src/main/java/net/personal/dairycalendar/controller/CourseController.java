@@ -4,8 +4,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.personal.dairycalendar.dto.CourseDto;
 import net.personal.dairycalendar.dto.CoursesDto;
+import net.personal.dairycalendar.dto.DayDescriptionDto;
 import net.personal.dairycalendar.dto.IdDto;
 import net.personal.dairycalendar.service.CourseService;
+import net.personal.dairycalendar.service.DayService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +29,7 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class CourseController {
     private final CourseService service;
+    private final DayService dayService;
     private static final String BASE_URL = "/api/course";
 
     public static final String URL_GET_COURSE_LIST = BASE_URL;
@@ -51,10 +54,11 @@ public class CourseController {
             courses = Set.of();
         }
         List<CourseDto> result = service.getCoursesForCurrentUser(fromDate, toDate, tags, courses, paused);
+        List<DayDescriptionDto> daysDescriptions = dayService.getDaysDescriptions(fromDate, toDate);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(new CoursesDto(result, fromDate, toDate));
+                .body(new CoursesDto(result, daysDescriptions, fromDate, toDate));
     }
 
     public static final String  URL_ADD_NEW_COURSE = BASE_URL;

@@ -3,10 +3,12 @@ package net.personal.dairycalendar;
 import net.personal.dairycalendar.exception.RecordIsNotExistException;
 import net.personal.dairycalendar.storage.entity.AppUserEntity;
 import net.personal.dairycalendar.storage.entity.CourseEntity;
+import net.personal.dairycalendar.storage.entity.DayDescription;
 import net.personal.dairycalendar.storage.entity.DayEntity;
 import net.personal.dairycalendar.storage.entity.TaskEntity;
 import net.personal.dairycalendar.storage.repository.AppUserRepository;
 import net.personal.dairycalendar.storage.repository.CourseRepository;
+import net.personal.dairycalendar.storage.repository.DayDescriptionRepository;
 import net.personal.dairycalendar.storage.repository.DayRepository;
 import net.personal.dairycalendar.storage.repository.TagRepository;
 import net.personal.dairycalendar.storage.repository.TaskRepository;
@@ -32,6 +34,8 @@ public class AbstractTest {
     private DayRepository dayRepository;
     @Autowired
     private TaskRepository taskRepository;
+    @Autowired
+    private DayDescriptionRepository dayDescriptionRepository;
 
     protected final static String USER_1_USERNAME = "user_1";
     protected final static String TAG_1_TITLE = "tag_1";
@@ -66,6 +70,16 @@ public class AbstractTest {
         );
         return courseRepository.save(courseEntity);
     }
+
+    public DayDescription saveDayDescription(String username, LocalDate date, String description) {
+        DayDescription dayDescription = new DayDescription(
+                loadUser(username),
+                date,
+                description
+        );
+        return dayDescriptionRepository.save(dayDescription);
+    }
+
 
     public DayEntity saveDay(long courseId, LocalDate day, int assessment) {
         CourseEntity courseEntity = courseRepository.findById(courseId)

@@ -2,6 +2,7 @@ package net.personal.dairycalendar.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.personal.dairycalendar.exception.RecordIsNotExistException;
 import net.personal.dairycalendar.storage.entity.AppUserEntity;
 import net.personal.dairycalendar.storage.repository.AppUserRepository;
 import org.springframework.security.core.GrantedAuthority;
@@ -39,6 +40,17 @@ public class AuthenticationService implements UserDetailsService {
                 .getContext()
                 .getAuthentication()
                 .getPrincipal();
+    }
+
+    public long getCurrentUserId() {
+        log.debug("Get current user id");
+        return this.getCurrentUser().getId();
+    }
+
+    public AppUserEntity getCurrentUserEntity() {
+        return userRepository
+                .findById(getCurrentUserId())
+                .orElseThrow(() -> new RecordIsNotExistException(AppUserEntity.class, getCurrentUserId()));
     }
 
     public boolean isAuthenticated() {

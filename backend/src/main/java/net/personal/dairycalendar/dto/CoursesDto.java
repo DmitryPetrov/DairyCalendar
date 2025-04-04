@@ -13,6 +13,7 @@ import java.util.List;
 public class CoursesDto {
 
     private List<CourseDto> courses = List.of();
+    private List<DayDescriptionDto> descriptions = List.of();
     private LocalDate fromDate;
     private LocalDate toDate;
 
