@@ -22,7 +22,7 @@ export default function DayCourseForm({date, course, handleAssessment, setUndefi
         handleAssessment(day)
     };
 
-    const [alignment, setAlignment] = React.useState<number | undefined>(
+    const [alignment, setAlignment] = React.useState<number | undefined>(//todo fix 'alignment' to 'assessment'
         course.days.find(day => day.date.hasSame(date, 'day'))?.assessment
     );
 
@@ -46,8 +46,7 @@ export default function DayCourseForm({date, course, handleAssessment, setUndefi
             <ToggleButtonGroup value={alignment}
                                exclusive
                                onChange={handleAlignment}
-                               size="small"
-                               fullWidth>
+                               size="small">
                 <ToggleButton value={0}>0</ToggleButton>
                 <ToggleButton value={1}>1</ToggleButton>
                 <ToggleButton value={2}>2</ToggleButton>

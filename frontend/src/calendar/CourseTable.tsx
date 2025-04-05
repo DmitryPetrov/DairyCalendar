@@ -4,9 +4,11 @@ import {DateTime} from "luxon";
 import {getCourses} from "../model/api";
 import {GetCoursesRequestParams} from "../model/GetCoursesRequestParams";
 import CourseTableView from "./CourseTableView";
+import {DayDescription} from "../model/DayDescription";
 
 export default function CourseTable() {
     const [courses, setCourses] = useState<Course[]>([])
+    const [daysDescriptions, setDaysDescriptions] = useState<DayDescription[]>([])
     const [dates, setDates] = useState<DateTime[]>([])
     const [reload, setReload] = useState<boolean>(false)
 
@@ -14,8 +16,9 @@ export default function CourseTable() {
         getCourses(new GetCoursesRequestParams(DateTime.now().minus({days: 28}), DateTime.now()), readPayload)
     }, [reload]);
 
-    function readPayload(courses: Course[], fromDate: DateTime, toDate: DateTime) {
+    function readPayload(courses: Course[], descriptions: DayDescription[], fromDate: DateTime, toDate: DateTime) {
         setCourses(courses);
+        setDaysDescriptions(descriptions);
         setDates(getDateList(fromDate, toDate))
     }
 
@@ -36,5 +39,5 @@ export default function CourseTable() {
         return result
     }
 
-    return <CourseTableView courses={courses} dates={dates} reloadTable={reloadTable}/>
+    return <CourseTableView courses={courses} daysDescriptions={daysDescriptions} dates={dates} reloadTable={reloadTable}/>
 }

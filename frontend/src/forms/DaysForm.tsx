@@ -12,7 +12,7 @@ interface CourseFormProps {
     onSave: (days: Day[]) => void;
     onCancel: () => void;
 }
-
+//todo remove?
 export default function DaysForm({onSave, onCancel}: CourseFormProps) {
 
     function toString(date: Date) {
@@ -23,7 +23,7 @@ export default function DaysForm({onSave, onCancel}: CourseFormProps) {
     const [days, setDays] = useState<Day[]>([]);
     const [courses, setCourses] = useState<Course[]>([]);
 
-    const handleSubmit = () => {postDays(days)};
+    const handleSubmit = () => {/*postDays(days)*/};
 
     React.useEffect(() => {setCourses(getCourseList())}, []);
 

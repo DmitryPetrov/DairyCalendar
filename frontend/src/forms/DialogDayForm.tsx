@@ -2,23 +2,35 @@ import * as React from 'react';
 import {useState} from 'react';
 import {Course} from "../model/Course";
 import {DateTime} from "luxon";
-import {Button, Dialog, DialogActions, DialogContent, DialogTitle, List} from "@mui/material";
+import {Button, Dialog, DialogActions, DialogContent, DialogTitle, Grid, List, TextField} from "@mui/material";
 import DayCourseForm from "./DayCourseForm";
 import {postDays} from "../model/api"
 import {Day} from "../model/Day";
+import {DayDescription} from "../model/DayDescription";
 
 interface RowProps {
     open: boolean;
     handleClose: () => void;
     date: DateTime;
     courses: Course[];
+    savedDescription: string
 }
 
-export default function DialogDayForm({ open, handleClose, date, courses}: RowProps) {
+export default function DialogDayForm({ open, handleClose, date, courses, savedDescription}: RowProps) {
 
     const [days, setDays] = useState<Day[]>([]);
+    const [description, setDescription] = useState<string>("");
+    React.useEffect(() => {
+        setDescription(savedDescription ?? "");
+    }, [savedDescription]);
+
     function sendDays() {
-        postDays(days)
+        console.log(description)
+        const dayDescription = new DayDescription({
+            date: date.toISODate(),
+            description: description
+        })
+        postDays(days, dayDescription)
         closeDialog();
     }
     function closeDialog() {
@@ -58,19 +70,33 @@ export default function DialogDayForm({ open, handleClose, date, courses}: RowPr
     }
 
     return (
-        <Dialog open={open} onClose={closeDialog}>
+        <Dialog open={open} onClose={closeDialog} fullWidth maxWidth={"lg"}>
             <DialogTitle>{date.toISODate()}</DialogTitle>
             <DialogContent>
-                <List dense={true}>
-                    {courses.map(course =>
-                        <DayCourseForm
-                            key={course.id}
-                            course={course}
-                            date={date}
-                            handleAssessment={handleAssessmentButton}
-                            setUndefinedAssessmentToZero={emptyToZero} />
-                    )}
-                </List>
+                <Grid container spacing={2}>
+                    <Grid item xs={5}>
+                        <List dense={true}>
+                            {courses.map(course =>
+                                <DayCourseForm
+                                    key={course.id}
+                                    course={course}
+                                    date={date}
+                                    handleAssessment={handleAssessmentButton}
+                                    setUndefinedAssessmentToZero={emptyToZero} />
+                            )}
+                        </List>
+                    </Grid>
+                    <Grid item xs={7}>
+                        <TextField
+                            sx={{width: '100%'}}
+                            label="Description"
+                            multiline
+                            variant="filled"
+                            rows={25}
+                            value={description}
+                            onChange={(e) => setDescription(e.target.value)}/>
+                    </Grid>
+                </Grid>
             </DialogContent>
             <DialogActions>
                 <Button onClick={handleEmptyToZero}>Empty to ZERO</Button>

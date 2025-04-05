@@ -7,6 +7,7 @@ import {GetCoursesRequestParams} from "../model/GetCoursesRequestParams";
 import {DateTime} from "luxon";
 import MonthCalendar from "./MonthCalendar";
 import {useParams} from "react-router-dom";
+import {DayDescription} from "../model/DayDescription";
 
 export default function CourseViewPage() {
     const [course, setCourse] = useState<Course>()
@@ -21,7 +22,7 @@ export default function CourseViewPage() {
         getCourses(params, readPayload)
     }, []);
 
-    function readPayload(courses: Course[], fromDate: DateTime, toDate: DateTime) {
+    function readPayload(courses: Course[], descriptions: DayDescription[], fromDate: DateTime, toDate: DateTime) {
         setCourse(courses[0]);
     }
 

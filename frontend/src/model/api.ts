@@ -5,6 +5,7 @@ import {GetCoursesRequestParams} from "./GetCoursesRequestParams";
 import {DateTime} from "luxon";
 import {Task} from "./Task";
 import * as Qs from "qs";
+import {DayDescription} from "./DayDescription";
 
 
 const URL = process.env.REACT_APP_API_ENDPOINT;
@@ -22,7 +23,7 @@ export const DATE_FORMAT = "yyyy-MM-dd"
 
 export const getCourses = (
     params: GetCoursesRequestParams,
-    readPayload: (courses: Course[], fromDate: DateTime, toDate: DateTime) => void
+    readPayload: (courses: Course[], descriptions: DayDescription[], fromDate: DateTime, toDate: DateTime) => void
 ) => {
     client
         .get('/api/course', {
@@ -32,6 +33,7 @@ export const getCourses = (
         .then(response => {
             readPayload(
                 response.data.courses.map((item: any) => new Course(item)),
+                response.data.descriptions.map((item: any) => new DayDescription(item)),
                 DateTime.fromISO(response.data.fromDate),
                 DateTime.fromISO(response.data.toDate)
             )
@@ -48,9 +50,12 @@ export const getCourseList = () => {
     return courses;
 }
 
-export const postDays = (days: Day[]) => {
+export const postDays = (days: Day[], description: DayDescription) => {
     client
-        .post(`/api/day`, days.map(item => item.toPostPayload()))
+        .post(`/api/day`, {
+            activities: days.map(item => item.toPostPayload()),
+            descriptions: [description.toPostPayload()]
+        })
         .then(response => {
             window.location.reload();
         })

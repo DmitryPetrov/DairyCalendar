@@ -10,7 +10,7 @@ interface CourseFormProps {
     onSave: (day: Day) => void;
     onCancel: () => void;
 }
-
+//todo remove?
 export default function DayForm({courses, onSave, onCancel, date}: CourseFormProps) {
     return(
         <List>
