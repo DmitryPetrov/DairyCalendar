@@ -28,6 +28,8 @@ public class TagService {
                 .collect(Collectors.toList());
     }
 
+    //todo делать новый TagCollection, только если есть теги
+    //если тегов нет, то не делать новый TagCollection
     @Transactional
     public void updateTagCollection(EntityWithTags entity, Set<String> tags) {
         Set<TagEntity> persistedTags = tagRepository.findAllByTagIn(tags);

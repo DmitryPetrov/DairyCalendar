@@ -22,7 +22,7 @@ public class EntityWithTags extends BaseEntity{
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @JoinColumn(name = "tag-collection_id", unique = true)
-    private TagCollectionEntity tagCollection = new TagCollectionEntity();
+    private TagCollectionEntity tagCollection;
 
     public EntityWithTags(Collection<TagEntity> tags) {
         this.addTags(tags);
