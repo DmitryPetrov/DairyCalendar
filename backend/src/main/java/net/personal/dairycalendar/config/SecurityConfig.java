@@ -64,9 +64,12 @@ public class SecurityConfig {
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:3000",
-                                                "http://localhost:8888",
-                                                "http://localhost:8181",
+        configuration.setAllowedOrigins(List.of("http://localhost:3000",//current device front dev
+                                                "http://localhost:8888",//current device prod (docker)
+                                                "http://localhost:8181",//current device back dev
+                                                "http://192.168.0.119:8888",//macbook pro in home net
+                                                "http://192.168.0.165:8888",//iphone in home net
+                                                "http://192.168.0.233:8888",//DESKTOP_PC in home net
                                                 "http://192.168.0.107:3000",
                                                 "http://192.168.0.107:8888",
                                                 "http://192.168.0.107:8181",
