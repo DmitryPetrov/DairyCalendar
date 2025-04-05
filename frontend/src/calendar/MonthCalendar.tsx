@@ -1,17 +1,58 @@
 import * as React from "react";
 import {DateTime} from "luxon";
 import {Day} from "../model/Day";
-import {Paper, Table, TableBody, TableCell, TableHead, TableRow, Typography} from "@mui/material";
+import {
+    Paper,
+    styled,
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableRow,
+    Tooltip, tooltipClasses,
+    TooltipProps,
+    Typography
+} from "@mui/material";
 import CloseIcon from '@mui/icons-material/Close';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import {DayDescription} from "../model/DayDescription";
 
 interface RowProps {
     days: Day[]
     year: number,
-    month: number
+    month: number,
+    daysDescriptions: DayDescription[];
 }
 
-export default function MonthCalendar({ days, year, month }: RowProps) {
+
+const CustomTooltip = styled(({ className, ...props }: TooltipProps) => (
+    <Tooltip {...props} classes={{ popper: className }} />
+))(({ theme }) => ({
+    [`& .${tooltipClasses.tooltip}`]: {
+        backgroundColor: '#f5f5f9',
+        color: 'rgba(0, 0, 0, 0.87)',
+        maxWidth: 500,
+        minWidth: 200,
+        fontSize: theme.typography.pxToRem(14),
+        border: '1px solid #dadde9',
+        whiteSpace: 'pre-wrap'
+    },
+}));
+
+
+
+
+export default function MonthCalendar({ days, year, month, daysDescriptions}: RowProps) {
+
+    const getDayDescriptionByDate = (date: DateTime | undefined) => {
+        console.log(date)
+        if (!date) {
+            return ""
+        }
+        const dayDescription : DayDescription = daysDescriptions
+            .filter((description) => date.hasSame(description.date, 'day'))[0];
+        return dayDescription?.description ?? ""
+    }
 
     let firstDay = DateTime.local(year, month, 1);
     let table: (DateTime | undefined)[][] = [[]];
@@ -54,17 +95,35 @@ export default function MonthCalendar({ days, year, month }: RowProps) {
                             {week.map((item, index2) => {
                                 let grade = days.find(day => item?.equals(day.date))?.assessment;
                                 if (grade === undefined) {
-                                    return <TableCell align="center" key={'day'+index2}>{item?.day}</TableCell>
+                                    return <CustomTooltip key={'day'+index2}
+                                                          title={getDayDescriptionByDate(item)}
+                                                          enterDelay={400}
+                                                          enterNextDelay={400}
+                                                          leaveDelay={200}>
+                                        <TableCell align="center" key={'day'+index2}>{item?.day}</TableCell>
+                                    </CustomTooltip>
                                 } else if (grade > 0) {
-                                    return <TableCell align="center" key={'day'+index2} className="calendar_cell">
-                                        <span className="calendar_cell_text">{item?.day}</span>
-                                        <CheckCircleIcon className="calendar_cell_icon done"/>
-                                    </TableCell>
+                                    return <CustomTooltip key={'day'+index2}
+                                                   title={getDayDescriptionByDate(item)}
+                                                   enterDelay={400}
+                                                   enterNextDelay={400}
+                                                   leaveDelay={200}>
+                                            <TableCell align="center" key={'day'+index2} className="calendar_cell">
+                                            <span className="calendar_cell_text">{item?.day}</span>
+                                            <CheckCircleIcon className="calendar_cell_icon done"/>
+                                        </TableCell>
+                                    </CustomTooltip>
                                 }
-                                return <TableCell align="center" key={'day'+index2} className="calendar_cell">
-                                    <span className="calendar_cell_text">{item?.day}</span>
-                                    <CloseIcon className="calendar_cell_icon undone"/>
-                                </TableCell>
+                                return <CustomTooltip key={'day'+index2}
+                                                      title={getDayDescriptionByDate(item)}
+                                                      enterDelay={400}
+                                                      enterNextDelay={400}
+                                                      leaveDelay={200}>
+                                    <TableCell align="center" key={'day'+index2} className="calendar_cell">
+                                        <span className="calendar_cell_text">{item?.day}</span>
+                                        <CloseIcon className="calendar_cell_icon undone"/>
+                                    </TableCell>
+                                </CustomTooltip>
                             })}
                         </TableRow>
                     })}

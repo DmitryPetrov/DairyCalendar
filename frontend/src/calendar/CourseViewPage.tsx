@@ -11,6 +11,7 @@ import {DayDescription} from "../model/DayDescription";
 
 export default function CourseViewPage() {
     const [course, setCourse] = useState<Course>()
+    const [daysDescriptions, setDaysDescriptions] = useState<DayDescription[]>([])
     const id = useParams().id;
 
     React.useEffect(() => {
@@ -24,6 +25,7 @@ export default function CourseViewPage() {
 
     function readPayload(courses: Course[], descriptions: DayDescription[], fromDate: DateTime, toDate: DateTime) {
         setCourse(courses[0]);
+        setDaysDescriptions(descriptions);
     }
 
     return (
@@ -35,7 +37,8 @@ export default function CourseViewPage() {
                     let date = DateTime.now().minus({month: 11}).plus({month: index})
                     return <Grid item xs={3} key={index}>
                         <MonthCalendar days={course ? course.days.filter(day => day.date.month === date.month) : []}
-                                       year={date.year} month={date.month}/>
+                                       year={date.year} month={date.month}
+                                       daysDescriptions={daysDescriptions}/>
                     </Grid>
                 })}
             </Grid>
