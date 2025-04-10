@@ -27,15 +27,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@DisplayName("Test get list of courses")
+@DisplayName("Test get days descriptions")
 class DayDescriptionController_GetIntegrationTest extends AbstractTest {
 
     @Autowired
     private MockMvc mockMvc;
     @Autowired
     private ObjectMapper objectMapper;
-    @Autowired
-    private DayDescriptionRepository dayDescriptionRepository;
 
     private DayDescription dayDescription1;
     private DayDescription dayDescription2;

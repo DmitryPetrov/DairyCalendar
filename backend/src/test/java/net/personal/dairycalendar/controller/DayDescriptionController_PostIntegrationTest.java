@@ -10,6 +10,7 @@ import net.personal.dairycalendar.storage.specification.DayDescriptionSpecificat
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.RepetitionInfo;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -19,18 +20,20 @@ import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@DisplayName("Test get list of courses")
+@DisplayName("Test post days descriptions")
 class DayDescriptionController_PostIntegrationTest extends AbstractTest {
 
     @Autowired
@@ -68,6 +71,106 @@ class DayDescriptionController_PostIntegrationTest extends AbstractTest {
                 .orElseThrow();
 
         assertEquals(dayDescription.getDescription(), descriptionText, "Description text wrong");
+    }
+
+    @Test
+    @WithUserDetails(USER_1_USERNAME)
+    @DisplayName("Update day description with same description text, update text must not saved")
+    void updateDayDescription() throws Exception {
+        LocalDate date = LocalDate.of(2025, 1, 1);
+        String descriptionText = "description";
+        DayDescriptionDto dayDescriptionDto = new DayDescriptionDto(date, descriptionText);
+        DayInformationDto requestPayload = new DayInformationDto(List.of(), List.of(dayDescriptionDto));
+        //save description
+        mockMvc
+                .perform(
+                        post(DayController.URL_SAVE_DAY_INFO)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(requestPayload))
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andReturn();
+
+        Specification<DayDescription> specification = Specification
+                .where(DayDescriptionSpecifications.byUser(loadUser(USER_1_USERNAME).getId())
+                               .and(DayDescriptionSpecifications.inPeriod(date, date)));
+        LocalDateTime beforeUpdate = dayDescriptionRepository.findAll(specification)
+                .stream()
+                .filter(description -> Objects.equals(description.getDate(), date))
+                .findFirst()
+                .orElseThrow()
+                .getUpdatedAt();
+
+        //update description
+        mockMvc
+                .perform(
+                        post(DayController.URL_SAVE_DAY_INFO)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(requestPayload))
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andReturn();
+
+        LocalDateTime afterUpdate = dayDescriptionRepository.findAll(specification)
+                .stream()
+                .filter(description -> Objects.equals(description.getDate(), date))
+                .findFirst()
+                .orElseThrow()
+                .getUpdatedAt();
+        assertEquals(beforeUpdate, afterUpdate, "Description saved twice");
+    }
+
+    @Test
+    @WithUserDetails(USER_1_USERNAME)
+    @DisplayName("Update day description with new description text, update text must saved twice")
+    void updateDayDescription2() throws Exception {
+        LocalDate date = LocalDate.of(2025, 1, 1);
+        String descriptionText = "description";
+        DayDescriptionDto dayDescriptionDto = new DayDescriptionDto(date, descriptionText);
+        DayInformationDto requestPayload = new DayInformationDto(List.of(), List.of(dayDescriptionDto));
+        //save description
+        mockMvc
+                .perform(
+                        post(DayController.URL_SAVE_DAY_INFO)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(requestPayload))
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andReturn();
+
+        Specification<DayDescription> specification = Specification
+                .where(DayDescriptionSpecifications.byUser(loadUser(USER_1_USERNAME).getId())
+                               .and(DayDescriptionSpecifications.inPeriod(date, date)));
+        LocalDateTime beforeUpdate = dayDescriptionRepository.findAll(specification)
+                .stream()
+                .filter(description -> Objects.equals(description.getDate(), date))
+                .findFirst()
+                .orElseThrow()
+                .getUpdatedAt();
+
+        //update description
+        dayDescriptionDto.setDescription("xdcfvgbhnjmk");
+        mockMvc
+                .perform(
+                        post(DayController.URL_SAVE_DAY_INFO)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(requestPayload))
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andReturn();
+
+        LocalDateTime afterUpdate = dayDescriptionRepository.findAll(specification)
+                .stream()
+                .filter(description -> Objects.equals(description.getDate(), date))
+                .findFirst()
+                .orElseThrow()
+                .getUpdatedAt();
+
+        assertNotEquals(beforeUpdate, afterUpdate, "Description not saved twice");
     }
 
     DayDescriptionDto getDayDescriptionDto(int i, int j) {

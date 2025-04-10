@@ -112,6 +112,10 @@ public class DayService {
     public void saveDescription(List<DayDescriptionDto> descriptions) {
         AppUser currentUser = authenticationService.getCurrentUser();
         log.debug("Add new days descriptions for user [{}]", currentUser);
+        if (descriptions.isEmpty()) {
+            log.debug("Description list is empty");
+            return;
+        }
 
         Set<LocalDate> dateCollection = descriptions
                 .stream()
@@ -121,25 +125,30 @@ public class DayService {
                 .where(DayDescriptionSpecifications.byUser(currentUser.getId()))
                 .and(DayDescriptionSpecifications.inDates(dateCollection));
         List<DayDescription> savedDescriptions = dayDescriptionRepository.findAll(specification);
-        List<DayDescriptionDto> editableDayCollection = new ArrayList<>(descriptions);
+        List<DayDescriptionDto> newDayDescriptions = new ArrayList<>(descriptions);
         List<DayDescription> updatedDescriptions = savedDescriptions
                 .stream()
-                .peek(entity -> {
-                    DayDescriptionDto found = null;
-                    for (DayDescriptionDto dto : editableDayCollection) {
-                        if (dto.getDate().equals(entity.getDate())) {
-                            found = dto;
-                            editableDayCollection.remove(found);
+                .map(entity -> {
+                    DayDescriptionDto savedDescription = null;// проверил: на конец метода значение не может быть null
+                    for (DayDescriptionDto dto : newDayDescriptions) {
+                        if (Objects.equals(dto.getDate(), entity.getDate())) {
+                            savedDescription = dto;
+                            newDayDescriptions.remove(savedDescription);
                             break;
                         }
                     }
-                    entity.setDescription(found.getDescription());
+                    if (Objects.equals(savedDescription.getDescription(), entity.getDescription())){
+                        return null; //do not save, if description not updated
+                    }
+                    entity.setDescription(savedDescription.getDescription());
+                    return entity;
                 })
+                .filter(Objects::nonNull)
                 .collect(Collectors.toList());
         dayDescriptionRepository.saveAll(updatedDescriptions);
 
         final AppUserEntity currentUserEntity = authenticationService.getCurrentUserEntity();
-        List<DayDescription> days = editableDayCollection
+        List<DayDescription> days = newDayDescriptions
                 .stream()
                 .map(dto -> {
                     if (!StringUtils.hasLength(dto.getDescription())) {
